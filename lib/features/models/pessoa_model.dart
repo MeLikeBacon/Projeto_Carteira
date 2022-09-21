@@ -21,7 +21,7 @@ class PessoaModel extends Entity {
   @override
   Map<String, dynamic> toMap() {
     return {
-      'id': codigo,
+      'codigo': codigo,
       'nome': nome,
       'email': email,
       'senha': senha,
@@ -32,18 +32,18 @@ class PessoaModel extends Entity {
 
   @override
   String toString() {
-    return 'Usuario{user_id: $codigo, nome: $nome, email: $email, senha: $senha, saldo: $saldo, minimo: $minimo}';
+    return 'PessoaModel{codigo: $codigo, nome: $nome, email: $email, senha: $senha, saldo: $saldo, minimo: $minimo}';
   }
 
   PessoaModel copyWith(
-      {int? id,
+      {int? codigo,
       String? nome,
       String? email,
       String? senha,
       double? saldo,
       double? minimo}) {
     return PessoaModel(
-        codigo: id ?? this.codigo,
+        codigo: codigo ?? this.codigo,
         nome: nome ?? this.nome,
         email: email ?? this.email,
         senha: senha ?? this.senha,
@@ -53,7 +53,7 @@ class PessoaModel extends Entity {
 
   factory PessoaModel.fromJson(Map<String, dynamic> json) {
     return PessoaModel(
-        codigo: json['id'],
+        codigo: json['codigo'],
         nome: json['nome'],
         email: json['email'],
         senha: json['senha'],

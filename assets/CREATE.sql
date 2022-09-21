@@ -10,17 +10,17 @@ CREATE TABLE IF NOT EXISTS pessoas(
 CREATE TABLE IF NOT EXISTS entrada(
     codigo              INTEGER PRIMARY KEY,
     pessoa              INTEGER,
-    FOREIGN KEY(pessoa) REFERENCES pessoas(codigo),
     data_entrada        TEXT,
     descricao           TEXT,
-    valor               REAL
+    valor               REAL,
+    FOREIGN KEY(pessoa) REFERENCES pessoas(codigo)
 );
 
 CREATE TABLE IF NOT EXISTS saida(
     codigo              INTEGER PRIMARY KEY,
     pessoa              INTEGER,
-    FOREIGN KEY(pessoa) REFERENCES pessoas(codigo),
     data_saida          TEXT,
     descricao           TEXT,
-    valor               REAL
+    valor               REAL,
+    FOREIGN KEY(pessoa) REFERENCES pessoas(codigo)
 );

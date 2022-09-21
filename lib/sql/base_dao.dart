@@ -12,7 +12,7 @@ abstract class BaseDao<T extends Entity> {
 
   T fromMap(Map<String, dynamic> map);
 
-  Future<int> save(T entity, String s) async {
+  Future<int> save(T entity) async {
     var dbClient = await db;
     var id = await dbClient!.insert(tableName, entity.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);

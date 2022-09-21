@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:projeto_carteira/sql/entity.dart';
 
 abstract class Movimento extends Entity {
@@ -7,12 +9,13 @@ abstract class Movimento extends Entity {
   String? descricao;
   double? valor;
 
-  int get id {
-    return codigo!;
-  }
+  Movimento(this.codigo, this.pessoa, this.data, this.descricao, this.valor);
 
-  set id(int value) => codigo = value;
+  @override
+  Map<String, dynamic> toMap();
 
-  Movimento(
-      int this.codigo, this.pessoa, this.data, this.descricao, this.valor);
+  @override
+  String toString();
+
+  String toJson() => json.encode(toMap());
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'routes.dart';
 import 'views/login_view.dart';
 
 class MyApp extends StatefulWidget {
@@ -12,9 +13,11 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'Teste',
-      home: LoginView(),
+      initialRoute: Routes.initial,
+      routes: Routes.routes,
+      home: const LoginView(),
     );
   }
 }

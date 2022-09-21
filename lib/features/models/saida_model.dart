@@ -1,20 +1,20 @@
 import 'package:projeto_carteira/features/models/movimento_abs.dart';
 
-class EntradaModel extends Movimento {
-  EntradaModel(
+class SaidaModel extends Movimento {
+  SaidaModel(
       {int? codigo,
       int? pessoa,
-      DateTime? data_entrada,
+      DateTime? data_saida,
       String? desc,
       double? valor})
-      : super(codigo, pessoa, data_entrada, desc, valor);
+      : super(codigo, pessoa, data_saida, desc, valor);
 
   @override
   Map<String, dynamic> toMap() {
     return {
       'codigo': codigo,
       'pessoa': pessoa,
-      'data_entrada': data.toString(),
+      'data_saida': data.toString(),
       'desc': descricao,
       'valor': valor,
     };
@@ -22,14 +22,14 @@ class EntradaModel extends Movimento {
 
   @override
   String toString() {
-    return 'EntradaModel{codigo: $codigo, pessoa: $pessoa, data_entrada: $data, desc: $descricao, valor: $valor}';
+    return 'EntradaModel{codigo: $codigo, pessoa: $pessoa, data_saida: $data, desc: $descricao, valor: $valor}';
   }
 
-  factory EntradaModel.fromJson(Map<String, dynamic> json) {
-    return EntradaModel(
+  factory SaidaModel.fromJson(Map<String, dynamic> json) {
+    return SaidaModel(
         codigo: json['codigo'],
         pessoa: json['pessoa'],
-        data_entrada: json['data_entrada'],
+        data_saida: json['data_saida'],
         desc: json['desc'],
         valor: json['valor']);
   }
