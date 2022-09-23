@@ -14,7 +14,12 @@ abstract class _PessoasStore with Store {
   PessoaModel currentUser = PessoaModel();
 
   @action
-  void login(PessoaModel newUser) {
+  void changeUser(PessoaModel newUser) {
     currentUser = newUser;
+  }
+
+  @action
+  logout() {
+    currentUser = PessoaModel();
   }
 }

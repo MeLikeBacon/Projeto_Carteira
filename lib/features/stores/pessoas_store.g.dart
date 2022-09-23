@@ -29,11 +29,11 @@ mixin _$PessoasStore on _PessoasStore, Store {
       ActionController(name: '_PessoasStore', context: context);
 
   @override
-  void login(PessoaModel newUser) {
+  void changeUser(PessoaModel newUser) {
     final _$actionInfo = _$_PessoasStoreActionController.startAction(
         name: '_PessoasStore.login');
     try {
-      return super.login(newUser);
+      return super.changeUser(newUser);
     } finally {
       _$_PessoasStoreActionController.endAction(_$actionInfo);
     }

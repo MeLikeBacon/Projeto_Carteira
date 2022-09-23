@@ -23,10 +23,13 @@ class _LoginViewState extends State<LoginView> {
 
   late PessoasStore _pessoasStore;
 
+  bool visible = false;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _pessoasStore = Provider.of<PessoasStore>(context);
+    Future.delayed(const Duration(seconds: 2));
     FlutterNativeSplash.remove();
   }
 
@@ -72,13 +75,19 @@ class _LoginViewState extends State<LoginView> {
                 width: screenSize.width * 0.75,
                 child: TextFormField(
                   controller: _controllerSenha,
+                  obscureText: !visible,
                   decoration: InputDecoration(
                     //errorText: '',
                     border: const OutlineInputBorder(),
                     labelText: 'Senha',
                     suffixIcon: IconButton(
-                      onPressed: _controllerSenha.clear,
-                      icon: const Icon(Icons.cancel_outlined),
+                      onPressed: (() {
+                        setState(() {
+                          visible = !visible;
+                        });
+                      }),
+                      icon: Icon(
+                          visible ? Icons.visibility : Icons.visibility_off),
                     ),
                   ),
                 ),
@@ -101,7 +110,7 @@ class _LoginViewState extends State<LoginView> {
                           await _pessoaController.logInPessoa(
                               _controllerEmail.text, _controllerSenha.text);
                       if (userlogin.isNotEmpty) {
-                        _pessoasStore.login(userlogin.first);
+                        _pessoasStore.changeUser(userlogin.first);
                         Navigator.pushReplacementNamed(context, '/home');
                       } else {}
                     },

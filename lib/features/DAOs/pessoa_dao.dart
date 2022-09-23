@@ -19,4 +19,21 @@ class PessoaDao extends BaseDao<PessoaModel> {
       print(e);
     }
   }
+
+  updateUser(PessoaModel updatedPessoa) async {
+    try {
+      await query(
+          'UPDATE pessoas SET nome = ?, email = ?, senha = ?, minimo = ? WHERE codigo = ?;',
+          [
+            updatedPessoa.nome,
+            updatedPessoa.email,
+            updatedPessoa.senha,
+            updatedPessoa.minimo,
+            updatedPessoa.codigo
+          ]);
+      print('update user, id: ${updatedPessoa.codigo}');
+    } catch (e) {
+      print(e);
+    }
+  }
 }

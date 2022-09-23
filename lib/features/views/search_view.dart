@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:projeto_carteira/features/app.dart';
 import 'package:projeto_carteira/features/components/myAppBar.dart';
 
-class MovsView extends StatefulWidget {
-  const MovsView({super.key});
+class SearchView extends StatefulWidget {
+  const SearchView({super.key});
 
   @override
-  State<MovsView> createState() => _MovsViewState();
+  State<SearchView> createState() => _SearchViewState();
 }
 
-class _MovsViewState extends State<MovsView> {
+class _SearchViewState extends State<SearchView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -36,18 +36,14 @@ class PessoaController {
   }
 
   // Updates both instance and database
-  updatePessoaWhole(PessoaModel pessoa, int id, String nome, String email,
-      String senha, double minimo) {
+  updatePessoaWhole(PessoaModel pessoa, PessoaModel tempPessoa) {
     //Instance
     pessoa
-      ..codigo = id
-      ..nome = nome
-      ..email = email
-      ..senha = senha
-      ..minimo = minimo;
+      ..nome = tempPessoa.nome
+      ..email = tempPessoa.email
+      ..senha = tempPessoa.senha
+      ..minimo = tempPessoa.minimo;
     //Database
-    _pessoaDao.query(
-        'UPDATE pessoas SET nome = ?, email = ?, senha = ?, minimo = ? WHERE id = ?;',
-        [nome, email, senha, minimo, pessoa.codigo]);
+    _pessoaDao.updateUser(pessoa);
   }
 }

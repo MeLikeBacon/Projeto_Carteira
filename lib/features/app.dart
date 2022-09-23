@@ -14,9 +14,10 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Teste',
+      title: 'Projeto Carteira',
       initialRoute: Routes.initial,
       routes: Routes.routes,
+      theme: ThemeData.light(useMaterial3: true),
       home: const LoginView(),
     );
   }

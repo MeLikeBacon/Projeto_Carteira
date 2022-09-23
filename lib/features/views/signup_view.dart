@@ -15,7 +15,12 @@ class _SignUpViewState extends State<SignUpView> {
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerNome = TextEditingController();
   final TextEditingController _controllerSenha = TextEditingController();
+
+  String? errorTextEmail, errorTextNome, errorTextSenha;
   double _controllerMinimo = 0;
+
+  bool visible = false;
+
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
@@ -36,7 +41,7 @@ class _SignUpViewState extends State<SignUpView> {
               child: TextFormField(
                 controller: _controllerEmail,
                 decoration: InputDecoration(
-                  //errorText: '',
+                  errorText: errorTextEmail,
                   border: const OutlineInputBorder(),
                   labelText: 'E-mail',
                   suffixIcon: IconButton(
@@ -51,7 +56,7 @@ class _SignUpViewState extends State<SignUpView> {
               child: TextFormField(
                 controller: _controllerNome,
                 decoration: InputDecoration(
-                  //errorText: '',
+                  errorText: errorTextNome,
                   border: const OutlineInputBorder(),
                   labelText: 'Nome',
                   suffixIcon: IconButton(
@@ -66,13 +71,19 @@ class _SignUpViewState extends State<SignUpView> {
               margin: const EdgeInsets.symmetric(vertical: 20),
               child: TextFormField(
                 controller: _controllerSenha,
+                obscureText: !visible,
                 decoration: InputDecoration(
-                  //errorText: '',
+                  errorText: errorTextSenha,
                   border: const OutlineInputBorder(),
                   labelText: 'Senha',
                   suffixIcon: IconButton(
-                    onPressed: _controllerSenha.clear,
-                    icon: const Icon(Icons.cancel_outlined),
+                    onPressed: (() {
+                      setState(() {
+                        visible = !visible;
+                      });
+                    }),
+                    icon:
+                        Icon(visible ? Icons.visibility : Icons.visibility_off),
                   ),
                 ),
               ),
@@ -102,38 +113,109 @@ class _SignUpViewState extends State<SignUpView> {
               ),
             ),
             Container(
-              width: screenSize.width * 0.70,
+              width: screenSize.width * 0.90,
               margin: const EdgeInsets.only(top: 15),
-              child: ElevatedButton(
-                  onPressed: () async {
-                    PessoaModel tempPessoa = PessoaModel(
-                        nome: _controllerNome.text,
-                        email: _controllerEmail.text,
-                        senha: _controllerSenha.text,
-                        minimo: _controllerMinimo);
-                    bool hasDuplicate = await _pessoaController.insertPessoa(
-                        context, tempPessoa);
+              child: Row(
+                children: [
+                  Container(
+                    width: screenSize.width * 0.70,
+                    child: ElevatedButton(
+                        onPressed: () async {
+                          PessoaModel tempPessoa = PessoaModel(
+                              nome: _controllerNome.text,
+                              email: _controllerEmail.text,
+                              senha: _controllerSenha.text,
+                              minimo: _controllerMinimo);
 
-                    if (hasDuplicate) {
-                      print('couldnt sign up');
-                    } else {
-                      AlertDialog(
-                        title: const Text('Registrado'),
-                        content: const Text('Pessoa registrada com sucesso.'),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () => Navigator.pop(context, 'OK'),
-                            child: const Text('OK'),
-                          ),
-                        ],
-                      );
-                    }
-                  },
-                  child: const Text('Registrar')),
+                          loginFun(tempPessoa);
+                        },
+                        child: const Text('Registrar')),
+                  ),
+                  ElevatedButton(
+                      style: ButtonStyle(
+                          shape:
+                              MaterialStateProperty.all(const CircleBorder())),
+                      onPressed: () =>
+                          Navigator.pushReplacementNamed(context, '/login'),
+                      child: const Icon(Icons.undo))
+                ],
+              ),
             ),
           ],
         ),
       )),
     );
+  }
+
+  void clearTextControllers() {
+    setState(() {
+      _controllerNome.text = '';
+
+      _controllerEmail.text = '';
+
+      _controllerSenha.text = '';
+
+      _controllerMinimo = 0;
+    });
+  }
+
+  void loginFun(PessoaModel tempPessoa) async {
+    bool hasDuplicate;
+
+    if (_controllerNome.text.isEmpty ||
+        _controllerEmail.text.isEmpty ||
+        _controllerSenha.text.isEmpty) {
+      setState(() {
+        _controllerNome.text.isEmpty
+            ? errorTextNome = 'Este campo está incompleto'
+            : errorTextNome = null;
+        _controllerEmail.text.isEmpty
+            ? errorTextEmail = 'Este campo está incompleto'
+            : errorTextEmail = null;
+        _controllerSenha.text.isEmpty
+            ? errorTextSenha = 'Este campo está incompleto'
+            : errorTextSenha = null;
+      });
+      clearTextControllers();
+      hasDuplicate = true;
+      return;
+    } else {
+      hasDuplicate = await _pessoaController.insertPessoa(context, tempPessoa);
+    }
+    if (hasDuplicate) {
+      clearTextControllers();
+      print('couldnt sign up');
+      showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+                title: const Text('Erro de registro'),
+                content:
+                    const Text('Já existe alguém registrado com esse e-mail.'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context, 'OK');
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              ));
+    } else {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+                title: const Text('Registrado'),
+                content: const Text('Pessoa registrada com sucesso.'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context, 'OK');
+                      Navigator.pushReplacementNamed(context, '/login');
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              ));
+    }
   }
 }
