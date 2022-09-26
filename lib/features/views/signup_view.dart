@@ -24,6 +24,8 @@ class _SignUpViewState extends State<SignUpView> {
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
+    var textSize = 12 + MediaQuery.of(context).size.width * 0.0075;
+    var iconSize = 25 + MediaQuery.of(context).size.width * 0.0075;
     return Scaffold(
       body: Center(
           child: SingleChildScrollView(
@@ -31,105 +33,133 @@ class _SignUpViewState extends State<SignUpView> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Text(
+            Text(
               'Registre-se!',
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: textSize + 20, fontWeight: FontWeight.bold),
             ),
-            Container(
-              width: screenSize.width * 0.75,
-              margin: const EdgeInsets.symmetric(vertical: 20),
-              child: TextFormField(
-                controller: _controllerEmail,
-                decoration: InputDecoration(
-                  errorText: errorTextEmail,
-                  border: const OutlineInputBorder(),
-                  labelText: 'E-mail',
-                  suffixIcon: IconButton(
-                    onPressed: _controllerEmail.clear,
-                    icon: const Icon(Icons.cancel_outlined),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 700),
+              child: Container(
+                width: screenSize.width * 0.75,
+                margin: const EdgeInsets.symmetric(vertical: 20),
+                child: TextFormField(
+                  controller: _controllerEmail,
+                  style: TextStyle(fontSize: textSize),
+                  decoration: InputDecoration(
+                    errorText: errorTextEmail,
+                    border: const OutlineInputBorder(),
+                    labelText: 'E-mail',
+                    suffixIcon: IconButton(
+                      onPressed: _controllerEmail.clear,
+                      icon: Icon(Icons.cancel_outlined, size: iconSize),
+                    ),
                   ),
                 ),
               ),
             ),
-            Container(
-              width: screenSize.width * 0.75,
-              child: TextFormField(
-                controller: _controllerNome,
-                decoration: InputDecoration(
-                  errorText: errorTextNome,
-                  border: const OutlineInputBorder(),
-                  labelText: 'Nome',
-                  suffixIcon: IconButton(
-                    onPressed: _controllerNome.clear,
-                    icon: const Icon(Icons.cancel_outlined),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 700),
+              child: SizedBox(
+                width: screenSize.width * 0.75,
+                child: TextFormField(
+                  controller: _controllerNome,
+                  style: TextStyle(fontSize: textSize),
+                  decoration: InputDecoration(
+                    errorText: errorTextNome,
+                    border: const OutlineInputBorder(),
+                    labelText: 'Nome',
+                    suffixIcon: IconButton(
+                      onPressed: _controllerNome.clear,
+                      icon: Icon(Icons.cancel_outlined, size: iconSize),
+                    ),
                   ),
                 ),
               ),
             ),
-            Container(
-              width: screenSize.width * 0.75,
-              margin: const EdgeInsets.symmetric(vertical: 20),
-              child: TextFormField(
-                controller: _controllerSenha,
-                obscureText: !visible,
-                decoration: InputDecoration(
-                  errorText: errorTextSenha,
-                  border: const OutlineInputBorder(),
-                  labelText: 'Senha',
-                  suffixIcon: IconButton(
-                    onPressed: (() {
-                      setState(() {
-                        visible = !visible;
-                      });
-                    }),
-                    icon:
-                        Icon(visible ? Icons.visibility : Icons.visibility_off),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 700),
+              child: Container(
+                width: screenSize.width * 0.75,
+                margin: const EdgeInsets.symmetric(vertical: 20),
+                child: TextFormField(
+                  controller: _controllerSenha,
+                  style: TextStyle(fontSize: textSize),
+                  obscureText: !visible,
+                  decoration: InputDecoration(
+                    errorText: errorTextSenha,
+                    border: const OutlineInputBorder(),
+                    labelText: 'Senha',
+                    suffixIcon: IconButton(
+                      onPressed: (() {
+                        setState(() {
+                          visible = !visible;
+                        });
+                      }),
+                      icon: Icon(
+                        visible ? Icons.visibility : Icons.visibility_off,
+                        size: iconSize,
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
-            Container(
-              width: screenSize.width * 0.9,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: screenSize.width * 0.075),
-                    child: const Text('Saldo mínimo'),
-                  ),
-                  Slider(
-                    value: _controllerMinimo,
-                    max: 600,
-                    divisions: 60,
-                    label: _controllerMinimo.round().toString(),
-                    onChanged: (double value) {
-                      setState(() {
-                        _controllerMinimo = value;
-                      });
-                    },
-                  ),
-                ],
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 700),
+              child: SizedBox(
+                width: screenSize.width * 0.9,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Saldo mínimo',
+                      style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                          color: Theme.of(context).hintColor,
+                          fontSize: textSize),
+                    ),
+                    Slider(
+                      value: _controllerMinimo,
+                      max: 600,
+                      divisions: 60,
+                      label: _controllerMinimo.round().toString(),
+                      onChanged: (double value) {
+                        setState(() {
+                          _controllerMinimo = value;
+                        });
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
             Container(
-              width: screenSize.width * 0.90,
+              width: screenSize.width,
+              alignment: Alignment.center,
               margin: const EdgeInsets.only(top: 15),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    width: screenSize.width * 0.70,
-                    child: ElevatedButton(
-                        onPressed: () async {
-                          PessoaModel tempPessoa = PessoaModel(
-                              nome: _controllerNome.text,
-                              email: _controllerEmail.text,
-                              senha: _controllerSenha.text,
-                              minimo: _controllerMinimo);
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 650),
+                    child: SizedBox(
+                      width: screenSize.width * 0.70,
+                      child: ElevatedButton(
+                          onPressed: () async {
+                            PessoaModel tempPessoa = PessoaModel(
+                                nome: _controllerNome.text,
+                                email: _controllerEmail.text,
+                                senha: _controllerSenha.text,
+                                minimo: _controllerMinimo);
 
-                          loginFun(tempPessoa);
-                        },
-                        child: const Text('Registrar')),
+                            loginFun(tempPessoa);
+                          },
+                          child: Text(
+                            'Registrar',
+                            style: TextStyle(fontSize: textSize),
+                          )),
+                    ),
                   ),
                   ElevatedButton(
                       style: ButtonStyle(
@@ -137,7 +167,10 @@ class _SignUpViewState extends State<SignUpView> {
                               MaterialStateProperty.all(const CircleBorder())),
                       onPressed: () =>
                           Navigator.pushReplacementNamed(context, '/login'),
-                      child: const Icon(Icons.undo))
+                      child: Icon(
+                        Icons.undo,
+                        size: iconSize,
+                      ))
                 ],
               ),
             ),

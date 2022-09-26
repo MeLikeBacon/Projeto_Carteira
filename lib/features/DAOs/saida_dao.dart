@@ -10,11 +10,26 @@ class SaidaDao extends BaseDao<SaidaModel> {
   @override
   String get tableName => 'saida';
 
-  getPessoas() async {
+  getSaidas() async {
     try {
       List<SaidaModel> saidas = await query('SELECT * FROM saida');
 
       return saidas;
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  updateSaida(SaidaModel updatedSaida) async {
+    try {
+      await query(
+          'UPDATE saida SET descricao = ?, data_saida = ?, valor = ? WHERE codigo = ?;',
+          [
+            updatedSaida.descricao,
+            updatedSaida.data,
+            updatedSaida.valor,
+          ]);
+      print('updated saida, id: ${updatedSaida.codigo}');
     } catch (e) {
       print(e);
     }

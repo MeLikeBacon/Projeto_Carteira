@@ -36,6 +36,8 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
+    var textSize = 12 + MediaQuery.of(context).size.width * 0.0075;
+    var iconSize = 25 + MediaQuery.of(context).size.width * 0.0075;
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -55,39 +57,52 @@ class _LoginViewState extends State<LoginView> {
                   ),
                 ),
               ),
-              Container(
-                width: screenSize.width * 0.75,
-                margin: const EdgeInsets.symmetric(vertical: 20),
-                child: TextFormField(
-                  controller: _controllerEmail,
-                  decoration: InputDecoration(
-                    //errorText: '',
-                    border: const OutlineInputBorder(),
-                    labelText: 'E-mail',
-                    suffixIcon: IconButton(
-                      onPressed: _controllerEmail.clear,
-                      icon: const Icon(Icons.cancel_outlined),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 700),
+                child: Container(
+                  width: screenSize.width * 0.75,
+                  margin: const EdgeInsets.symmetric(vertical: 20),
+                  child: TextFormField(
+                    controller: _controllerEmail,
+                    style: TextStyle(fontSize: textSize),
+                    decoration: InputDecoration(
+                      //errorText: '',
+                      border: const OutlineInputBorder(),
+                      labelText: 'E-mail',
+                      suffixIcon: IconButton(
+                        onPressed: _controllerEmail.clear,
+                        icon: Icon(
+                          Icons.cancel_outlined,
+                          size: iconSize,
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
-              Container(
-                width: screenSize.width * 0.75,
-                child: TextFormField(
-                  controller: _controllerSenha,
-                  obscureText: !visible,
-                  decoration: InputDecoration(
-                    //errorText: '',
-                    border: const OutlineInputBorder(),
-                    labelText: 'Senha',
-                    suffixIcon: IconButton(
-                      onPressed: (() {
-                        setState(() {
-                          visible = !visible;
-                        });
-                      }),
-                      icon: Icon(
-                          visible ? Icons.visibility : Icons.visibility_off),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 700),
+                child: SizedBox(
+                  width: screenSize.width * 0.75,
+                  child: TextFormField(
+                    controller: _controllerSenha,
+                    style: TextStyle(fontSize: textSize),
+                    obscureText: !visible,
+                    decoration: InputDecoration(
+                      //errorText: '',
+                      border: const OutlineInputBorder(),
+                      labelText: 'Senha',
+                      suffixIcon: IconButton(
+                        onPressed: (() {
+                          setState(() {
+                            visible = !visible;
+                          });
+                        }),
+                        icon: Icon(
+                          visible ? Icons.visibility : Icons.visibility_off,
+                          size: iconSize,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -97,29 +112,38 @@ class _LoginViewState extends State<LoginView> {
                 child: RichText(
                     text: TextSpan(
                         text: 'Esqueceu a senha?',
-                        style: const TextStyle(color: Colors.lightBlue),
+                        style: TextStyle(
+                            fontSize: textSize - 4, color: Colors.lightBlue),
                         recognizer: TapGestureRecognizer()
                           ..onTap = (() => print('funciona')))),
               ),
-              Container(
-                width: screenSize.width * 0.70,
-                margin: const EdgeInsets.only(top: 15),
-                child: ElevatedButton(
-                    onPressed: () async {
-                      List<PessoaModel> userlogin =
-                          await _pessoaController.logInPessoa(
-                              _controllerEmail.text, _controllerSenha.text);
-                      if (userlogin.isNotEmpty) {
-                        _pessoasStore.changeUser(userlogin.first);
-                        Navigator.pushReplacementNamed(context, '/home');
-                      } else {}
-                    },
-                    child: const Text('Entrar')),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 650),
+                child: Container(
+                  width: screenSize.width * 0.70,
+                  margin: EdgeInsets.only(top: 15 * screenSize.height * 0.0025),
+                  child: ElevatedButton(
+                      onPressed: () async {
+                        List<PessoaModel> userlogin =
+                            await _pessoaController.logInPessoa(
+                                _controllerEmail.text, _controllerSenha.text);
+                        if (userlogin.isNotEmpty) {
+                          _pessoasStore.changeUser(userlogin.first);
+                          Navigator.pushReplacementNamed(context, '/home');
+                        } else {}
+                      },
+                      child: Text(
+                        'Entrar',
+                        style: TextStyle(fontSize: textSize),
+                      )),
+                ),
               ),
               TextButton(
-                  onPressed: () =>
-                      Navigator.pushReplacementNamed(context, '/signup'),
-                  child: const Text('Não tenho conta')),
+                  onPressed: () => Navigator.pushNamed(context, '/signup'),
+                  child: Text(
+                    'Não tenho conta',
+                    style: TextStyle(fontSize: textSize),
+                  )),
             ],
           ),
         ),

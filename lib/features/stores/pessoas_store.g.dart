@@ -31,9 +31,20 @@ mixin _$PessoasStore on _PessoasStore, Store {
   @override
   void changeUser(PessoaModel newUser) {
     final _$actionInfo = _$_PessoasStoreActionController.startAction(
-        name: '_PessoasStore.login');
+        name: '_PessoasStore.changeUser');
     try {
       return super.changeUser(newUser);
+    } finally {
+      _$_PessoasStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  dynamic logout() {
+    final _$actionInfo = _$_PessoasStoreActionController.startAction(
+        name: '_PessoasStore.logout');
+    try {
+      return super.logout();
     } finally {
       _$_PessoasStoreActionController.endAction(_$actionInfo);
     }

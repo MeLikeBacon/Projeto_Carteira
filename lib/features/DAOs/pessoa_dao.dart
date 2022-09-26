@@ -31,7 +31,7 @@ class PessoaDao extends BaseDao<PessoaModel> {
             updatedPessoa.minimo,
             updatedPessoa.codigo
           ]);
-      print('update user, id: ${updatedPessoa.codigo}');
+      print('updated user, id: ${updatedPessoa.codigo}');
     } catch (e) {
       print(e);
     }

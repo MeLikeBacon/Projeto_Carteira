@@ -44,6 +44,8 @@ class _AccountViewState extends State<AccountView> {
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
+    var textSize = 12 + MediaQuery.of(context).size.width * 0.0075;
+    var iconSize = 25 + MediaQuery.of(context).size.width * 0.0075;
     return Scaffold(
       appBar: MyAppBar(
         title: 'Alterar conta',
@@ -65,102 +67,133 @@ class _AccountViewState extends State<AccountView> {
                     ),
                   ),
                 ),
-                Container(
-                  width: screenSize.width * 0.75,
-                  margin: const EdgeInsets.symmetric(vertical: 20),
-                  child: TextFormField(
-                    controller: _controllerEmail,
-                    decoration: InputDecoration(
-                      errorText: errorTextEmail,
-                      border: const OutlineInputBorder(),
-                      labelText: 'E-mail',
-                      suffixIcon: IconButton(
-                        onPressed: _controllerEmail.clear,
-                        icon: const Icon(Icons.cancel_outlined),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 700),
+                  child: Container(
+                    width: screenSize.width * 0.75,
+                    margin: const EdgeInsets.symmetric(vertical: 20),
+                    child: TextFormField(
+                      controller: _controllerEmail,
+                      style: TextStyle(fontSize: textSize),
+                      decoration: InputDecoration(
+                        errorText: errorTextEmail,
+                        border: const OutlineInputBorder(),
+                        labelText: 'E-mail',
+                        suffixIcon: IconButton(
+                          onPressed: _controllerEmail.clear,
+                          icon: const Icon(Icons.cancel_outlined),
+                        ),
                       ),
                     ),
                   ),
                 ),
-                Container(
-                  width: screenSize.width * 0.75,
-                  child: TextFormField(
-                    controller: _controllerNome,
-                    decoration: InputDecoration(
-                      errorText: errorTextNome,
-                      border: const OutlineInputBorder(),
-                      labelText: 'Nome',
-                      suffixIcon: IconButton(
-                        onPressed: _controllerNome.clear,
-                        icon: const Icon(Icons.cancel_outlined),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 700),
+                  child: SizedBox(
+                    width: screenSize.width * 0.75,
+                    child: TextFormField(
+                      controller: _controllerNome,
+                      style: TextStyle(fontSize: textSize),
+                      decoration: InputDecoration(
+                        errorText: errorTextNome,
+                        border: const OutlineInputBorder(),
+                        labelText: 'Nome',
+                        suffixIcon: IconButton(
+                          onPressed: _controllerNome.clear,
+                          icon: const Icon(Icons.cancel_outlined),
+                        ),
                       ),
                     ),
                   ),
                 ),
-                Container(
-                  width: screenSize.width * 0.75,
-                  margin: const EdgeInsets.symmetric(vertical: 20),
-                  child: TextFormField(
-                    controller: _controllerSenha,
-                    obscureText: !visible,
-                    decoration: InputDecoration(
-                      errorText: errorTextSenha,
-                      border: const OutlineInputBorder(),
-                      labelText: 'Senha',
-                      suffixIcon: IconButton(
-                        onPressed: (() {
-                          setState(() {
-                            visible = !visible;
-                          });
-                        }),
-                        icon: Icon(
-                            visible ? Icons.visibility : Icons.visibility_off),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 700),
+                  child: Container(
+                    width: screenSize.width * 0.75,
+                    margin: const EdgeInsets.symmetric(vertical: 20),
+                    child: TextFormField(
+                      controller: _controllerSenha,
+                      obscureText: !visible,
+                      style: TextStyle(fontSize: textSize),
+                      decoration: InputDecoration(
+                        errorText: errorTextSenha,
+                        border: const OutlineInputBorder(),
+                        labelText: 'Senha',
+                        suffixIcon: IconButton(
+                          onPressed: (() {
+                            setState(() {
+                              visible = !visible;
+                            });
+                          }),
+                          icon: Icon(visible
+                              ? Icons.visibility
+                              : Icons.visibility_off),
+                        ),
                       ),
                     ),
                   ),
                 ),
-                Container(
-                  width: screenSize.width * 0.9,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding:
-                            EdgeInsets.only(left: screenSize.width * 0.075),
-                        child: const Text('Saldo mínimo'),
-                      ),
-                      Slider(
-                        value: _controllerMinimo,
-                        max: 600,
-                        divisions: 60,
-                        label: _controllerMinimo.round().toString(),
-                        onChanged: (double value) {
-                          setState(() {
-                            _controllerMinimo = value;
-                          });
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 700),
+                  child: SizedBox(
+                    width: screenSize.width * 0.9,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Saldo mínimo',
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelLarge!
+                              .copyWith(
+                                  color: Theme.of(context).hintColor,
+                                  fontSize: textSize),
+                        ),
+                        Slider(
+                          value: _controllerMinimo,
+                          max: 600,
+                          divisions: 60,
+                          label: _controllerMinimo.round().toString(),
+                          onChanged: (double value) {
+                            setState(() {
+                              _controllerMinimo = value;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 650),
+                  child: Container(
+                    width: screenSize.width * 0.70,
+                    margin: const EdgeInsets.only(top: 15),
+                    child: ElevatedButton(
+                        onPressed: () async {
+                          PessoaModel tempPessoa = PessoaModel(
+                              nome: _controllerNome.text,
+                              email: _controllerEmail.text,
+                              senha: _controllerSenha.text,
+                              minimo: _controllerMinimo);
+                          changeFun(tempPessoa);
                         },
-                      ),
-                    ],
+                        child: Row(
+                          children: [
+                            Expanded(
+                                child: Center(
+                                    child: Text(
+                              'Salvar',
+                              style: TextStyle(fontSize: textSize),
+                            ))),
+                            Icon(
+                              Icons.save,
+                              size: iconSize,
+                            )
+                          ],
+                        )),
                   ),
-                ),
-                Container(
-                  width: screenSize.width * 0.70,
-                  margin: const EdgeInsets.only(top: 15),
-                  child: ElevatedButton(
-                      onPressed: () async {
-                        PessoaModel tempPessoa = PessoaModel(
-                            nome: _controllerNome.text,
-                            email: _controllerEmail.text,
-                            senha: _controllerSenha.text,
-                            minimo: _controllerMinimo);
-                        changeFun(tempPessoa);
-                      },
-                      child: Row(
-                        children: const [
-                          Expanded(child: Center(child: Text('Salvar'))),
-                          Icon(Icons.save)
-                        ],
-                      )),
                 ),
               ],
             ),
@@ -169,7 +202,10 @@ class _AccountViewState extends State<AccountView> {
           onPressed: () {
             Navigator.pushReplacementNamed(context, '/home');
           },
-          child: const Icon(Icons.home)),
+          child: Icon(
+            Icons.home,
+            size: iconSize,
+          )),
     );
   }
 

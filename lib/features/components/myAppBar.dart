@@ -16,6 +16,7 @@ class _MyAppBarState extends State<MyAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      toolbarHeight: 64,
       backgroundColor: Colors.lightBlueAccent,
       leadingWidth: 75,
       leading: const Icon(
@@ -23,7 +24,13 @@ class _MyAppBarState extends State<MyAppBar> {
         size: 40,
         color: Color.fromARGB(255, 10, 57, 95),
       ),
-      title: Text(widget.title ?? ''),
+      title: Text(
+        widget.title ?? '',
+        style: Theme.of(context)
+            .textTheme
+            .titleLarge!
+            .copyWith(fontWeight: FontWeight.w700),
+      ),
     );
   }
 }
