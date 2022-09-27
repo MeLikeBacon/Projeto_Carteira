@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:projeto_carteira/features/DAOs/pessoa_dao.dart';
+import 'package:projeto_carteira/features/models/pessoa_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../sql/db_helper.dart';
@@ -8,8 +10,12 @@ import '../models/entrada_model.dart';
 class EntradaController {
   Future<Database?> get db => DatabaseHelper.getInstance().db;
   final EntradaDao _entradaDao = EntradaDao();
+  final PessoaDao _pessoaDao = PessoaDao();
 
-  insertEntrada(EntradaModel entrada) async {
+  insertEntrada(EntradaModel entrada, PessoaModel pessoa) async {
+    pessoa.saldo = pessoa.saldo! + entrada.valor!;
+    double newSaldo = pessoa.saldo!;
+    await _pessoaDao.updateSaldo(entrada.pessoa!, newSaldo);
     await _entradaDao.save(entrada);
   }
 

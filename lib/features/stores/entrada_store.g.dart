@@ -25,19 +25,32 @@ mixin _$EntradaStore on _EntradaStore, Store {
     });
   }
 
-  late final _$_EntradaStoreActionController =
-      ActionController(name: '_EntradaStore', context: context);
+  late final _$entradaLoadedAtom =
+      Atom(name: '_EntradaStore.entradaLoaded', context: context);
 
   @override
-  dynamic loadEntradas() {
-    final _$actionInfo = _$_EntradaStoreActionController.startAction(
-        name: '_EntradaStore.loadEntradas');
-    try {
-      return super.loadEntradas();
-    } finally {
-      _$_EntradaStoreActionController.endAction(_$actionInfo);
-    }
+  bool get entradaLoaded {
+    _$entradaLoadedAtom.reportRead();
+    return super.entradaLoaded;
   }
+
+  @override
+  set entradaLoaded(bool value) {
+    _$entradaLoadedAtom.reportWrite(value, super.entradaLoaded, () {
+      super.entradaLoaded = value;
+    });
+  }
+
+  late final _$loadEntradasAsyncAction =
+      AsyncAction('_EntradaStore.loadEntradas', context: context);
+
+  @override
+  Future loadEntradas() {
+    return _$loadEntradasAsyncAction.run(() => super.loadEntradas());
+  }
+
+  late final _$_EntradaStoreActionController =
+      ActionController(name: '_EntradaStore', context: context);
 
   @override
   dynamic emptyEntradas() {
@@ -53,7 +66,8 @@ mixin _$EntradaStore on _EntradaStore, Store {
   @override
   String toString() {
     return '''
-entradas: ${entradas}
+entradas: ${entradas},
+entradaLoaded: ${entradaLoaded}
     ''';
   }
 }

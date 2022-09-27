@@ -8,8 +8,10 @@ abstract class Movimento extends Entity {
   DateTime? data;
   String? descricao;
   double? valor;
+  bool? mov_type;
 
-  Movimento(this.codigo, this.pessoa, this.data, this.descricao, this.valor);
+  Movimento(this.codigo, this.pessoa, this.data, this.descricao, this.valor,
+      this.mov_type);
 
   @override
   Map<String, dynamic> toMap();

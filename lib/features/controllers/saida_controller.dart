@@ -2,14 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../sql/db_helper.dart';
+import '../DAOs/pessoa_dao.dart';
 import '../DAOs/saida_dao.dart';
+import '../models/pessoa_model.dart';
 import '../models/saida_model.dart';
 
 class SaidaController {
   Future<Database?> get db => DatabaseHelper.getInstance().db;
   final SaidaDao _saidaDao = SaidaDao();
+  final PessoaDao _pessoaDao = PessoaDao();
 
-  insertSaida(SaidaModel entrada) async {
+  insertSaida(SaidaModel entrada, PessoaModel pessoa) async {
+    pessoa.saldo = pessoa.saldo! - entrada.valor!;
+    double newSaldo = pessoa.saldo!;
+    await _pessoaDao.updateSaldo(entrada.pessoa!, newSaldo);
     await _saidaDao.save(entrada);
   }
 

@@ -15,9 +15,14 @@ abstract class _SaidaStore with Store {
   @observable
   List<SaidaModel> saidas = [];
 
+  @observable
+  bool saidaLoaded = true;
+
   @action
-  loadSaidas() {
-    saidas = _saidaDao.getSaidas();
+  loadSaidas() async {
+    saidaLoaded = false;
+    saidas = await _saidaDao.getSaidas();
+    saidaLoaded = true;
   }
 
   @action

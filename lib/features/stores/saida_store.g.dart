@@ -24,19 +24,32 @@ mixin _$SaidaStore on _SaidaStore, Store {
     });
   }
 
-  late final _$_SaidaStoreActionController =
-      ActionController(name: '_SaidaStore', context: context);
+  late final _$saidaLoadedAtom =
+      Atom(name: '_SaidaStore.saidaLoaded', context: context);
 
   @override
-  dynamic loadSaidas() {
-    final _$actionInfo = _$_SaidaStoreActionController.startAction(
-        name: '_SaidaStore.loadSaidas');
-    try {
-      return super.loadSaidas();
-    } finally {
-      _$_SaidaStoreActionController.endAction(_$actionInfo);
-    }
+  bool get saidaLoaded {
+    _$saidaLoadedAtom.reportRead();
+    return super.saidaLoaded;
   }
+
+  @override
+  set saidaLoaded(bool value) {
+    _$saidaLoadedAtom.reportWrite(value, super.saidaLoaded, () {
+      super.saidaLoaded = value;
+    });
+  }
+
+  late final _$loadSaidasAsyncAction =
+      AsyncAction('_SaidaStore.loadSaidas', context: context);
+
+  @override
+  Future loadSaidas() {
+    return _$loadSaidasAsyncAction.run(() => super.loadSaidas());
+  }
+
+  late final _$_SaidaStoreActionController =
+      ActionController(name: '_SaidaStore', context: context);
 
   @override
   dynamic emptyEntradas() {
@@ -52,7 +65,8 @@ mixin _$SaidaStore on _SaidaStore, Store {
   @override
   String toString() {
     return '''
-saidas: ${saidas}
+saidas: ${saidas},
+saidaLoaded: ${saidaLoaded}
     ''';
   }
 }

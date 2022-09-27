@@ -20,6 +20,15 @@ class PessoaDao extends BaseDao<PessoaModel> {
     }
   }
 
+  updateSaldo(int pessoaId, double newSaldo) async {
+    try {
+      await query('UPDATE pessoas SET saldo = ? WHERE codigo = ?;',
+          [newSaldo, pessoaId]);
+    } catch (e) {
+      print(e);
+    }
+  }
+
   updateUser(PessoaModel updatedPessoa) async {
     try {
       await query(

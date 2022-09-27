@@ -15,9 +15,14 @@ abstract class _EntradaStore with Store {
   @observable
   List<EntradaModel> entradas = [];
 
+  @observable
+  bool entradaLoaded = true;
+
   @action
-  loadEntradas() {
-    entradas = _entradaDao.getEntradas();
+  loadEntradas() async {
+    entradaLoaded = false;
+    entradas = await _entradaDao.getEntradas();
+    entradaLoaded = true;
   }
 
   @action

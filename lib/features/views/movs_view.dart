@@ -155,7 +155,8 @@ class _MovsViewState extends State<MovsView> {
 
                       setState(() {
                         if (validDate()) {
-                          _entradaController.insertEntrada(tempEntrada);
+                          _entradaController.insertEntrada(
+                              tempEntrada, _pessoasStore.currentUser);
                           ErrorTextDate = null;
                         } else {
                           ErrorTextDate = 'Data inválida';
@@ -183,7 +184,8 @@ class _MovsViewState extends State<MovsView> {
 
                       setState(() {
                         if (validDate()) {
-                          _saidaController.insertSaida(tempSaida);
+                          _saidaController.insertSaida(
+                              tempSaida, _pessoasStore.currentUser);
                           ErrorTextDate = null;
                         } else {
                           ErrorTextDate = 'Data inválida';
