@@ -44,8 +44,9 @@ mixin _$MovsStore on _MovsStore, Store {
       AsyncAction('_MovsStore.loadMovs', context: context);
 
   @override
-  Future loadMovs() {
-    return _$loadMovsAsyncAction.run(() => super.loadMovs());
+  Future loadMovs({String initialDate = '', String finalDate = ''}) {
+    return _$loadMovsAsyncAction.run(
+        () => super.loadMovs(initialDate: initialDate, finalDate: finalDate));
   }
 
   late final _$_MovsStoreActionController =

@@ -10,9 +10,16 @@ class EntradaDao extends BaseDao<EntradaModel> {
   @override
   String get tableName => 'entrada';
 
-  getEntradas() async {
+  getEntradas({String initialDate = '', String finalDate = ''}) async {
+    List<EntradaModel> entradas = [];
+
     try {
-      List<EntradaModel> entradas = await query('SELECT * FROM entrada');
+      if (initialDate.isNotEmpty && finalDate.isNotEmpty) {
+        entradas = await query(
+            "SELECT * FROM entrada WHERE data_entrada BETWEEN '$initialDate' AND '$finalDate'");
+      } else {
+        entradas = await query('SELECT * FROM entrada');
+      }
 
       return entradas;
     } catch (e) {

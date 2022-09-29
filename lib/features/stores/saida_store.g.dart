@@ -44,19 +44,20 @@ mixin _$SaidaStore on _SaidaStore, Store {
       AsyncAction('_SaidaStore.loadSaidas', context: context);
 
   @override
-  Future loadSaidas() {
-    return _$loadSaidasAsyncAction.run(() => super.loadSaidas());
+  Future loadSaidas({String initialDate = '', String finalDate = ''}) {
+    return _$loadSaidasAsyncAction.run(
+        () => super.loadSaidas(initialDate: initialDate, finalDate: finalDate));
   }
 
   late final _$_SaidaStoreActionController =
       ActionController(name: '_SaidaStore', context: context);
 
   @override
-  dynamic emptyEntradas() {
+  dynamic emptySaidas() {
     final _$actionInfo = _$_SaidaStoreActionController.startAction(
-        name: '_SaidaStore.emptyEntradas');
+        name: '_SaidaStore.emptySaidas');
     try {
-      return super.emptyEntradas();
+      return super.emptySaidas();
     } finally {
       _$_SaidaStoreActionController.endAction(_$actionInfo);
     }

@@ -19,9 +19,10 @@ abstract class _EntradaStore with Store {
   bool entradaLoaded = true;
 
   @action
-  loadEntradas() async {
+  loadEntradas({String initialDate = '', String finalDate = ''}) async {
     entradaLoaded = false;
-    entradas = await _entradaDao.getEntradas();
+    entradas = await _entradaDao.getEntradas(
+        initialDate: initialDate, finalDate: finalDate);
     entradaLoaded = true;
   }
 
