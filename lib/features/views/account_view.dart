@@ -195,6 +195,7 @@ class _AccountViewState extends State<AccountView> {
                         )),
                   ),
                 ),
+                SizedBox(height: iconSize)
               ],
             ),
           )),

@@ -184,9 +184,39 @@ class _MovsViewState extends State<MovsView> {
 
                       setState(() {
                         if (validDate()) {
-                          _saidaController.insertSaida(
-                              tempSaida, _pessoasStore.currentUser);
                           ErrorTextDate = null;
+                          if (_pessoasStore.currentUser.saldo! -
+                                  UtilBrasilFields.converterMoedaParaDouble(
+                                      _valueController.text) <
+                              _pessoasStore.currentUser.minimo!) {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                                      title: const Text('Aviso de consumo!'),
+                                      content: Text(
+                                          'Fazer essa movimentação deixará seu saldo abaixo do seu mínimo definido de ${UtilBrasilFields.obterReal(_pessoasStore.currentUser.minimo!.toDouble())}, deseja continuar?'),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context, 'SIM');
+                                            _saidaController.insertSaida(
+                                                tempSaida,
+                                                _pessoasStore.currentUser);
+                                          },
+                                          child: const Text('SIM'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context, 'NÃO');
+                                          },
+                                          child: const Text('NÃO'),
+                                        ),
+                                      ],
+                                    ));
+                          } else {
+                            _saidaController.insertSaida(
+                                tempSaida, _pessoasStore.currentUser);
+                          }
                         } else {
                           ErrorTextDate = 'Data inválida';
                         }

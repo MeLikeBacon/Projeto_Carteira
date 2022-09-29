@@ -75,7 +75,7 @@ class _consultaTableState extends State<consultaTable> {
                           .sort(((b, a) => a.valor!.compareTo(b.valor!)));
                 }),
             label: const Text(
-              'Valor (R\$)',
+              'Valor\n(R\$)',
               textAlign: TextAlign.center,
             )),
       ];

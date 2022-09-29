@@ -120,10 +120,7 @@ class _HomeViewState extends State<HomeView> {
         ),
       ),
       screenVertical
-          ? Container(
-              height: (screenSize.height - 80) - (screenSize.width * 1.5),
-              color: const Color.fromARGB(177, 206, 235, 247),
-            )
+          ? Container()
           : InkWell(
               onTap: () {},
               child: Container(
