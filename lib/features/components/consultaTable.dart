@@ -79,7 +79,7 @@ class _consultaTableState extends State<consultaTable> {
               textAlign: TextAlign.center,
             )),
       ];
-      widget.view == 'Tudo'
+      widget.view == 'Entradas e Saídas'
           ? columns.add(DataColumn(
               onSort: (columnIndex, ascending) => setState(() {
                 widget.sortColumnIndex = columnIndex;
@@ -135,7 +135,7 @@ class _consultaTableState extends State<consultaTable> {
         )),
       ];
 
-      widget.view == 'Tudo'
+      widget.view == 'Entradas e Saídas'
           ? cells.add(DataCell(Text(
               widget.tableItems[index].mov_type! ? 'E' : 'S',
             )))

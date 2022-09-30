@@ -1,6 +1,4 @@
-import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:intl/intl.dart';
@@ -11,8 +9,6 @@ import 'package:projeto_carteira/features/stores/movs_store.dart';
 import 'package:projeto_carteira/features/stores/saida_store.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-
-import '../models/movimento_abs.dart';
 
 class SearchView extends StatefulWidget {
   const SearchView({super.key});
@@ -29,8 +25,8 @@ class _SearchViewState extends State<SearchView> {
   bool isAscending = true;
   int sortColumnIndex = 3;
 
-  List<String> consultaItems = ['Tudo', 'Entradas', 'Saídas'];
-  String? consultaDrop = 'Tudo';
+  List<String> consultaItems = ['Entradas e Saídas', 'Entradas', 'Saídas'];
+  String? consultaDrop = 'Entradas e Saídas';
 
   String dataRangeStart = '', dataRangeEnd = '';
 
@@ -69,7 +65,7 @@ class _SearchViewState extends State<SearchView> {
 
     defineView() {
       switch (consultaDrop!) {
-        case 'Tudo':
+        case 'Entradas e Saídas':
           return _movsStore.movs;
         case 'Entradas':
           return _entradaStore.entradas;
@@ -83,6 +79,16 @@ class _SearchViewState extends State<SearchView> {
     return Scaffold(
       appBar: MyAppBar(
         title: 'Consulta',
+        actions: [
+          IconButton(
+              onPressed: (() =>
+                  Navigator.pushReplacementNamed(context, '/pdf')),
+              icon: const Icon(
+                Icons.picture_as_pdf,
+                size: 40,
+                color: Color.fromARGB(255, 10, 57, 95),
+              ))
+        ],
       ),
       body: Center(
           heightFactor: 1,
@@ -135,17 +141,17 @@ class _SearchViewState extends State<SearchView> {
                     onChanged: ((String? value) {
                       setState(() {
                         switch (value!) {
-                          case 'Tudo':
+                          case 'Entradas e Saídas':
                             sortColumnIndex = 3;
-                            filterMovs();
+                            //filterMovs();
                             break;
                           case 'Entradas':
                             sortColumnIndex = 0;
-                            filterEntradas();
+                            //filterEntradas();
                             break;
                           case 'Saídas':
                             sortColumnIndex = 0;
-                            filterSaidas();
+                            //filterSaidas();
                             break;
                         }
                         consultaDrop = value;
@@ -261,6 +267,7 @@ class _SearchViewState extends State<SearchView> {
   }
 
   filterMovs({String initialDate = '', String finalDate = ''}) async {
+    print('filtrado');
     _movsStore.emptyMovs();
     await _movsStore.loadMovs(initialDate: initialDate, finalDate: finalDate);
   }
@@ -279,7 +286,7 @@ class _SearchViewState extends State<SearchView> {
 
   defineDataRange() {
     switch (consultaDrop) {
-      case 'Tudo':
+      case 'Entradas e Saídas':
         filterMovs(initialDate: dataRangeStart, finalDate: dataRangeEnd);
         break;
       case 'Entradas':

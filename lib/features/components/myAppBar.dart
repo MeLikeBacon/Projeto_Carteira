@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 class MyAppBar extends StatefulWidget with PreferredSizeWidget {
-  MyAppBar({super.key, this.title});
+  MyAppBar({super.key, this.title, this.actions});
 
   String? title;
+
+  List<Widget>? actions;
 
   @override
   State<MyAppBar> createState() => _MyAppBarState();
@@ -31,6 +33,7 @@ class _MyAppBarState extends State<MyAppBar> {
             .titleLarge!
             .copyWith(fontWeight: FontWeight.w700),
       ),
+      actions: widget.actions,
     );
   }
 }

@@ -57,9 +57,33 @@ class _HomeViewState extends State<HomeView> {
                   if (iconLabels[screenVertical ? index - 1 : index] ==
                       'Sair') {
                     print('deslogado');
-                    _pessoasStore.logout();
-                    Navigator.pushReplacementNamed(
-                        context, iconRefs[screenVertical ? index - 1 : index]);
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                              title: const Text('Saindo'),
+                              content: const Text(
+                                  'Deseja realmente sair de sua conta?'),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context, 'SIM');
+                                    _pessoasStore.logout();
+                                    Navigator.pushNamedAndRemoveUntil(
+                                        context,
+                                        iconRefs[
+                                            screenVertical ? index - 1 : index],
+                                        ModalRoute.withName('/'));
+                                  },
+                                  child: const Text('SIM'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context, 'NÃO');
+                                  },
+                                  child: const Text('NÃO'),
+                                ),
+                              ],
+                            ));
                   } else {
                     Navigator.pushNamed(
                         context, iconRefs[screenVertical ? index - 1 : index]);
