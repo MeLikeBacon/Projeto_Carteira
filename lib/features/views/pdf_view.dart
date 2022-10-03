@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pdf_viewer_plugin/pdf_viewer_plugin.dart';
 import 'package:projeto_carteira/features/components/myAppBar.dart';
 import 'package:provider/provider.dart';
 
@@ -23,6 +24,8 @@ class _PDFViewState extends State<PDFView> {
   List<String> consultaItems = ['Entradas e Saídas', 'Entradas', 'Saídas'];
 
   int number = 0;
+
+  String? filePath;
 
   @override
   void didChangeDependencies() {
@@ -60,6 +63,7 @@ class _PDFViewState extends State<PDFView> {
         child: SingleChildScrollView(
             child: Container(
           constraints: const BoxConstraints(maxWidth: 500),
+          margin: const EdgeInsets.only(top: 10),
           width: screenSize.width * 0.75,
           child: Column(children: [
             Container(
@@ -122,32 +126,43 @@ class _PDFViewState extends State<PDFView> {
                         side: const BorderSide(color: Colors.blue)),
                     onPressed: () async {
                       final data;
+                      setState(() {
+                        filePath = null;
+                      });
+
                       switch (consultaDrop!) {
                         case 'Entradas e Saídas':
                           await _movsStore.emptyMovs();
                           await _movsStore.loadMovs();
                           data =
                               await service.createMovsInvoice(_movsStore.movs);
-                          service.savePdfFile("relatorio_$number", data);
-                          print(_movsStore.movs);
+                          filePath = await service.savePdfFile(
+                              "relatorio_$number", data);
+                          setState(() {});
                           break;
                         case 'Entradas':
                           await _entradaStore.emptyEntradas();
                           await _entradaStore.loadEntradas();
                           data = await service
                               .createSpecificInvoice(_entradaStore.entradas);
-                          service.savePdfFile("relatorio_$number", data);
-                          print(_entradaStore.entradas);
+                          filePath = await service.savePdfFile(
+                              "relatorio_$number", data);
+                          setState(() {});
                           break;
                         case 'Saídas':
                           await _saidaStore.emptySaidas();
                           await _saidaStore.loadSaidas();
                           data = await service
                               .createSpecificInvoice(_saidaStore.saidas);
-                          service.savePdfFile("relatorio_$number", data);
-                          print(_saidaStore.saidas);
+                          filePath = await service.savePdfFile(
+                              "relatorio_$number", data);
+                          setState(() {});
                           break;
                       }
+                      final snackBar = SnackBar(
+                        content: Text("Relatório salvo em '$filePath'"),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       number++;
                     },
                     child: const Text('Todos'),
@@ -162,27 +177,37 @@ class _PDFViewState extends State<PDFView> {
                         side: const BorderSide(color: Colors.blue)),
                     onPressed: () async {
                       final data;
+                      setState(() {
+                        filePath = null;
+                      });
 
                       switch (consultaDrop!) {
                         case 'Entradas e Saídas':
                           data =
                               await service.createMovsInvoice(_movsStore.movs);
-                          service.savePdfFile("relatorio_$number", data);
-                          print(_movsStore.movs);
+                          filePath = await service.savePdfFile(
+                              "relatorio_$number", data);
+                          setState(() {});
                           break;
                         case 'Entradas':
                           data = await service
                               .createSpecificInvoice(_entradaStore.entradas);
-                          service.savePdfFile("relatorio_$number", data);
-                          print(_entradaStore.entradas);
+                          filePath = await service.savePdfFile(
+                              "relatorio_$number", data);
+                          setState(() {});
                           break;
                         case 'Saídas':
                           data = await service
                               .createSpecificInvoice(_saidaStore.saidas);
-                          service.savePdfFile("relatorio_$number", data);
-                          print(_saidaStore.saidas);
+                          filePath = await service.savePdfFile(
+                              "relatorio_$number", data);
+                          setState(() {});
                           break;
                       }
+                      final snackBar = SnackBar(
+                        content: Text("Relatório salvo em '$filePath'"),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       number++;
                     },
                     child: const Text('Selecionados'),
@@ -199,6 +224,17 @@ class _PDFViewState extends State<PDFView> {
                 style: TextStyle(fontWeight: FontWeight.w300),
               ),
             ),
+            filePath != null
+                ? Column(
+                    children: [
+                      Text('Preview:'),
+                      SizedBox(
+                          width: screenSize.width * 0.75,
+                          height: screenSize.width * 0.75 * 1.414,
+                          child: PdfView(path: filePath!)),
+                    ],
+                  )
+                : const SizedBox()
           ]),
         )),
       ),

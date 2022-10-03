@@ -219,36 +219,42 @@ class _SignUpViewState extends State<SignUpView> {
       clearTextControllers();
       print('couldnt sign up');
       showDialog(
-          context: context,
-          builder: (BuildContext context) => AlertDialog(
-                title: const Text('Erro de registro'),
-                content:
-                    const Text('Já existe alguém registrado com esse e-mail.'),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context, 'OK');
-                    },
-                    child: const Text('OK'),
-                  ),
-                ],
-              ));
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Erro de registro'),
+          content: Container(
+              constraints: const BoxConstraints(maxHeight: 20, maxWidth: 200),
+              child:
+                  const Text('Já existe alguém registrado com esse e-mail.')),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, 'OK');
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
     } else {
       showDialog(
-          context: context,
-          builder: (BuildContext context) => AlertDialog(
-                title: const Text('Registrado'),
-                content: const Text('Pessoa registrada com sucesso.'),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context, 'OK');
-                      Navigator.pushReplacementNamed(context, '/login');
-                    },
-                    child: const Text('OK'),
-                  ),
-                ],
-              ));
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Registrado'),
+          content: Container(
+              constraints: const BoxConstraints(maxHeight: 20, maxWidth: 200),
+              child: const Text('Pessoa registrada com sucesso.')),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, 'OK');
+                Navigator.pushReplacementNamed(context, '/login');
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
   }
 }

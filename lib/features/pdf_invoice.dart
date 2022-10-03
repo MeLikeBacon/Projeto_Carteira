@@ -1,14 +1,16 @@
 import 'dart:io';
 import 'package:brasil_fields/brasil_fields.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
-import 'package:open_document/open_document.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/widgets.dart';
 
 import 'models/movimento_abs.dart';
+
+// final pdfPinchController = pdfx.PdfControllerPinch(
+//   document: pdfx.PdfDocument.openAsset('assets/sample.pdf'),
+// );
 
 class CustomRow {
   final String itemDate;
@@ -45,7 +47,9 @@ class PdfInvoiceService {
             UtilData.obterDataDDMMAAAA(movimento.data!),
             movimento.descricao!,
             UtilBrasilFields.obterReal(movimento.valor!),
-            movimento.mov_type! ? 'E' : 'S')
+            movimento.mov_type! ? 'E' : 'S'),
+      CustomRow(
+          'Soma total', '', '', UtilBrasilFields.obterReal(getSumTotal(movs)!))
     ];
 
     pdf.addPage(pw.Page(
@@ -68,7 +72,9 @@ class PdfInvoiceService {
           UtilData.obterDataDDMMAAAA(specific.data!),
           specific.descricao!,
           UtilBrasilFields.obterReal(specific.valor!),
-        )
+        ),
+      CustomRow(
+          'Soma total', '', UtilBrasilFields.obterReal(getSumTotal(specifics)!))
     ];
 
     pdf.addPage(pw.Page(
@@ -81,12 +87,14 @@ class PdfInvoiceService {
     return pdf.save();
   }
 
-  Future<void> savePdfFile(String fileName, Uint8List byteList) async {
-    final output = await getTemporaryDirectory();
+  Future<String> savePdfFile(String fileName, Uint8List byteList) async {
+    final output = await getApplicationDocumentsDirectory();
     var filePath = '${output.path}/$fileName.pdf';
     final file = File(filePath);
     await file.writeAsBytes(byteList);
-    await OpenDocument.openDocument(filePath: filePath);
+
+    print(filePath);
+    return filePath;
   }
 
   pw.Expanded itemColumn(List<CustomRow> elements, bool fourColumns) {
@@ -134,5 +142,13 @@ class PdfInvoiceService {
         ],
       ),
     );
+  }
+
+  getSumTotal(List<Movimento> items) {
+    return items.fold(
+        0.0,
+        (previousValue, element) =>
+            previousValue +
+            (element.mov_type! ? element.valor! : -element.valor!));
   }
 }
