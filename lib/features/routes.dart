@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projeto_carteira/features/views/forgor_view.dart';
 import 'package:projeto_carteira/features/views/home_view.dart';
 import 'package:projeto_carteira/features/views/login_view.dart';
 import 'package:projeto_carteira/features/views/movs_view.dart';
@@ -17,6 +18,7 @@ class Routes {
   static const search_view = '/search';
   static const pdf_view = '/pdf';
   static const account_view = '/account';
+  static const forgor_view = '/forgor';
 
   static Map<String, Widget Function(BuildContext)> routes = {
     home_view: (BuildContext context) => HomeView(),
@@ -26,5 +28,8 @@ class Routes {
     search_view: (BuildContext context) => SearchView(),
     pdf_view: (BuildContext context) => PDFView(),
     account_view: (BuildContext context) => AccountView(),
+    forgor_view: (BuildContext context) => ForgorView(),
   };
+
+  static GlobalKey<NavigatorState>? navigatorKey = GlobalKey<NavigatorState>();
 }

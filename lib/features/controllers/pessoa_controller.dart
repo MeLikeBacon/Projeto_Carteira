@@ -27,6 +27,11 @@ class PessoaController {
         "SELECT * from pessoas WHERE email = ? AND senha = ?", [email, senha]);
   }
 
+  Future<List<PessoaModel>> findPessoaByEmail(String email) async {
+    return await _pessoaDao
+        .query("SELECT * from pessoas WHERE email = ?", [email]);
+  }
+
   deletePessoa(int id) async {
     await _pessoaDao.delete(id, 'codigo');
   }

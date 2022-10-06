@@ -1,12 +1,14 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+
 import 'package:projeto_carteira/features/controllers/pessoa_controller.dart';
 import 'package:projeto_carteira/features/models/pessoa_model.dart';
+import 'package:projeto_carteira/features/services/firebase_messaging_service.dart';
+import 'package:projeto_carteira/features/services/notification_service.dart';
 import 'package:projeto_carteira/features/stores/pessoas_store.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-
-import '../models/entrada_model.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -24,6 +26,30 @@ class _LoginViewState extends State<LoginView> {
   late PessoasStore _pessoasStore;
 
   bool visible = false;
+
+  String messageTitle = "Empty";
+  String notificationAlert = "alert";
+
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+
+  @override
+  void initState() {
+    // TODO: implementar initState
+    super.initState();
+
+    checkNotifications();
+    initializeFirebaseMessaging();
+  }
+
+  checkNotifications() async {
+    await Provider.of<NotificationService>(context, listen: false)
+        .checkForNotifications();
+  }
+
+  initializeFirebaseMessaging() async {
+    await Provider.of<FirebaseMessagingService>(context, listen: false)
+        .initialize();
+  }
 
   @override
   void didChangeDependencies() {
@@ -115,7 +141,9 @@ class _LoginViewState extends State<LoginView> {
                         style: TextStyle(
                             fontSize: textSize - 4, color: Colors.lightBlue),
                         recognizer: TapGestureRecognizer()
-                          ..onTap = (() => print('funciona')))),
+                          ..onTap = (() {
+                            Navigator.pushReplacementNamed(context, '/forgor');
+                          }))),
               ),
               ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 650),

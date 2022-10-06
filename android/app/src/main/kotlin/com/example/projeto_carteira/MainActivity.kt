@@ -1,4 +1,4 @@
-package com.example.projeto_carteira
+package com.wols.projeto_carteira
 
 import io.flutter.embedding.android.FlutterActivity
 

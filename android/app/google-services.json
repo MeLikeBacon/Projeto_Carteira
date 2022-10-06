@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "1097846532237",
+    "project_id": "projeto-carteira",
+    "storage_bucket": "projeto-carteira.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1097846532237:android:4b63fa954e574c4f151ac4",
+        "android_client_info": {
+          "package_name": "com.wols.projeto_carteira"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1097846532237-mn58lbmumdjqb3uobqnm0qj4p4f0l2g1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhQHs1sFALq5pnkrPWXCfYMT_Xjj3F1uU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1097846532237-mn58lbmumdjqb3uobqnm0qj4p4f0l2g1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1097846532237-qn4pr4fp8do68t1a094khbn895i2vdjb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.wols.projetoCarteira"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
