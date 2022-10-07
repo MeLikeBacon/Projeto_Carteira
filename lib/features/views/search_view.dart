@@ -30,9 +30,6 @@ class _SearchViewState extends State<SearchView> {
 
   String dataRangeStart = '', dataRangeEnd = '';
 
-  final TextEditingController _initialDateController = TextEditingController();
-  final TextEditingController _finalDateController = TextEditingController();
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -85,6 +82,14 @@ class _SearchViewState extends State<SearchView> {
                   Navigator.pushReplacementNamed(context, '/pdf')),
               icon: const Icon(
                 Icons.picture_as_pdf,
+                size: 40,
+                color: Color.fromARGB(255, 10, 57, 95),
+              )),
+          IconButton(
+              onPressed: (() =>
+                  Navigator.pushReplacementNamed(context, '/plots')),
+              icon: const Icon(
+                Icons.query_stats,
                 size: 40,
                 color: Color.fromARGB(255, 10, 57, 95),
               ))

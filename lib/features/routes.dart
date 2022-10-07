@@ -3,6 +3,7 @@ import 'package:projeto_carteira/features/views/forgor_view.dart';
 import 'package:projeto_carteira/features/views/home_view.dart';
 import 'package:projeto_carteira/features/views/login_view.dart';
 import 'package:projeto_carteira/features/views/movs_view.dart';
+import 'package:projeto_carteira/features/views/plots_view.dart';
 import 'package:projeto_carteira/features/views/signup_view.dart';
 
 import 'views/account_view.dart';
@@ -19,6 +20,7 @@ class Routes {
   static const pdf_view = '/pdf';
   static const account_view = '/account';
   static const forgor_view = '/forgor';
+  static const plots_view = '/plots';
 
   static Map<String, Widget Function(BuildContext)> routes = {
     home_view: (BuildContext context) => HomeView(),
@@ -29,6 +31,7 @@ class Routes {
     pdf_view: (BuildContext context) => PDFView(),
     account_view: (BuildContext context) => AccountView(),
     forgor_view: (BuildContext context) => ForgorView(),
+    plots_view: (BuildContext context) => PlotsView(),
   };
 
   static GlobalKey<NavigatorState>? navigatorKey = GlobalKey<NavigatorState>();
