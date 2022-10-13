@@ -10,19 +10,25 @@ CREATE TABLE IF NOT EXISTS pessoas(
 CREATE TABLE IF NOT EXISTS entrada(
     codigo              INTEGER PRIMARY KEY,
     pessoa              INTEGER,
+    responsavel         INTEGER,
     data_entrada        DATE,
     descricao           TEXT,
     valor               REAL,
     mov_type            BOOLEAN,
-    FOREIGN KEY(pessoa) REFERENCES pessoas(codigo)
+    FOREIGN KEY(pessoa)         REFERENCES pessoas(codigo),
+    FOREIGN KEY(responsavel)    REFERENCES pessoas(codigo)
 );
 
 CREATE TABLE IF NOT EXISTS saida(
     codigo              INTEGER PRIMARY KEY,
     pessoa              INTEGER,
+    responsavel         INTEGER,
     data_saida          DATE,
     descricao           TEXT,
     valor               REAL,
     mov_type            BOOLEAN,
-    FOREIGN KEY(pessoa) REFERENCES pessoas(codigo)
+    FOREIGN KEY(pessoa)         REFERENCES pessoas(codigo),
+    FOREIGN KEY(responsavel)    REFERENCES pessoas(codigo)
 );
+
+INSERT INTO pessoas(codigo,nome,email,senha,minimo,saldo) SELECT 0, 'admin', 'adm', '27', 0, 0 WHERE NOT EXISTS(SELECT 1 FROM pessoas WHERE codigo = 0);

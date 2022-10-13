@@ -14,8 +14,7 @@ class SaidaController {
 
   insertSaida(SaidaModel entrada, PessoaModel pessoa) async {
     pessoa.saldo = pessoa.saldo! - entrada.valor!;
-    double newSaldo = pessoa.saldo!;
-    await _pessoaDao.updateSaldo(entrada.pessoa!, newSaldo);
+    await _pessoaDao.updateSaldo(entrada.pessoa!, pessoa.saldo!);
     await _saidaDao.save(entrada);
   }
 

@@ -28,10 +28,8 @@ class _MyAppState extends State<MyApp> {
         GlobalCupertinoLocalizations.delegate
       ],
       supportedLocales: const [
-        Locale('fr', ''),
         Locale('pt', ''),
         Locale('en', ''),
-        Locale('ar', ''),
       ],
       locale: const Locale('pt'),
       home: const LoginView(),

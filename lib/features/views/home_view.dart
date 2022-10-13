@@ -14,27 +14,52 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   late PessoasStore _pessoasStore;
 
+  late List<IconData> iconButtons;
+  late List<String> iconLabels, iconRefs;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _pessoasStore = Provider.of<PessoasStore>(context);
-  }
 
-  List<IconData> iconButtons = [
-    Icons.manage_accounts,
-    Icons.account_balance_wallet,
-    Icons.receipt_long,
-    Icons.picture_as_pdf,
-    Icons.logout,
-  ];
-  List<String> iconLabels = [
-    'Editar conta',
-    'Movimentar',
-    'Consultar',
-    'Exportar PDF',
-    'Sair'
-  ];
-  List<String> iconRefs = ['/account', '/movs', '/search', '/pdf', '/login'];
+    if (_pessoasStore.currentUser.codigo != 0) {
+      iconButtons = [
+        Icons.manage_accounts,
+        Icons.account_balance_wallet,
+        Icons.receipt_long,
+        Icons.picture_as_pdf,
+        Icons.logout,
+      ];
+
+      iconLabels = [
+        'Editar conta',
+        'Movimentar',
+        'Consultar',
+        'Exportar PDF',
+        'Sair'
+      ];
+
+      iconRefs = ['/account', '/movs', '/search', '/pdf', '/login'];
+    } else {
+      iconButtons = [
+        Icons.group_add,
+        Icons.account_balance_wallet,
+        Icons.receipt_long,
+        Icons.person_search,
+        Icons.logout,
+      ];
+
+      iconLabels = [
+        'Cadastrar/Excluir usuários',
+        'Movimentar',
+        'Consultar',
+        'Ver usuários',
+        'Sair'
+      ];
+
+      iconRefs = ['/manage', '/movs', '/search', '/userlist', '/login'];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +68,34 @@ class _HomeViewState extends State<HomeView> {
     var iconSize = 40 + MediaQuery.of(context).size.width * 0.0075;
     bool screenVertical =
         MediaQuery.of(context).orientation == Orientation.portrait;
+
+    void deslogar() {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+                title: const Text('Saindo'),
+                content: const Text('Deseja realmente sair de sua conta?'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context, 'SIM');
+                      _pessoasStore.logout();
+                      Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          iconRefs[screenVertical ? 5 - 1 : 5],
+                          ModalRoute.withName('/'));
+                    },
+                    child: const Text('SIM'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context, 'NÃO');
+                    },
+                    child: const Text('NÃO'),
+                  ),
+                ],
+              ));
+    }
 
     List<Widget> homePage = [
       Expanded(
@@ -56,34 +109,7 @@ class _HomeViewState extends State<HomeView> {
                 } else {
                   if (iconLabels[screenVertical ? index - 1 : index] ==
                       'Sair') {
-                    print('deslogado');
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) => AlertDialog(
-                              title: const Text('Saindo'),
-                              content: const Text(
-                                  'Deseja realmente sair de sua conta?'),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context, 'SIM');
-                                    _pessoasStore.logout();
-                                    Navigator.pushNamedAndRemoveUntil(
-                                        context,
-                                        iconRefs[
-                                            screenVertical ? index - 1 : index],
-                                        ModalRoute.withName('/'));
-                                  },
-                                  child: const Text('SIM'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context, 'NÃO');
-                                  },
-                                  child: const Text('NÃO'),
-                                ),
-                              ],
-                            ));
+                    deslogar();
                   } else {
                     Navigator.pushNamed(
                         context, iconRefs[screenVertical ? index - 1 : index]);
@@ -182,12 +208,16 @@ class _HomeViewState extends State<HomeView> {
 
     return Scaffold(
       appBar: MyAppBar(),
-      body: screenVertical
-          ? Column(
-              children: homePage,
-            )
-          : Row(
-              children: homePage,
+      body: iconRefs.isNotEmpty
+          ? screenVertical
+              ? Column(
+                  children: homePage,
+                )
+              : Row(
+                  children: homePage,
+                )
+          : const Center(
+              child: CircularProgressIndicator(),
             ),
     );
   }

@@ -1,10 +1,14 @@
+// ignore_for_file: constant_identifier_names, prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:projeto_carteira/features/views/forgor_view.dart';
 import 'package:projeto_carteira/features/views/home_view.dart';
 import 'package:projeto_carteira/features/views/login_view.dart';
+import 'package:projeto_carteira/features/views/manage_view.dart';
 import 'package:projeto_carteira/features/views/movs_view.dart';
 import 'package:projeto_carteira/features/views/plots_view.dart';
 import 'package:projeto_carteira/features/views/signup_view.dart';
+import 'package:projeto_carteira/features/views/userlist_view.dart';
 
 import 'views/account_view.dart';
 import 'views/pdf_view.dart';
@@ -21,6 +25,8 @@ class Routes {
   static const account_view = '/account';
   static const forgor_view = '/forgor';
   static const plots_view = '/plots';
+  static const manage_view = '/manage';
+  static const userlist_view = '/userlist';
 
   static Map<String, Widget Function(BuildContext)> routes = {
     home_view: (BuildContext context) => HomeView(),
@@ -32,6 +38,8 @@ class Routes {
     account_view: (BuildContext context) => AccountView(),
     forgor_view: (BuildContext context) => ForgorView(),
     plots_view: (BuildContext context) => PlotsView(),
+    manage_view: (BuildContext context) => ManageView(),
+    userlist_view: (BuildContext context) => UserListView(),
   };
 
   static GlobalKey<NavigatorState>? navigatorKey = GlobalKey<NavigatorState>();

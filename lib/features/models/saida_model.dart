@@ -4,17 +4,20 @@ class SaidaModel extends Movimento {
   SaidaModel(
       {int? codigo,
       int? pessoa,
+      int? responsavel,
       DateTime? data_saida,
       String? descricao,
       double? valor,
       bool? mov_type = false})
-      : super(codigo, pessoa, data_saida, descricao, valor, mov_type);
+      : super(codigo, pessoa, responsavel, data_saida, descricao, valor,
+            mov_type);
 
   @override
   Map<String, dynamic> toMap() {
     return {
       'codigo': codigo,
       'pessoa': pessoa,
+      'responsavel': responsavel,
       'data_saida': data.toString(),
       'descricao': descricao,
       'valor': valor,
@@ -24,13 +27,14 @@ class SaidaModel extends Movimento {
 
   @override
   String toString() {
-    return 'SaidaModel{codigo: $codigo, pessoa: $pessoa, data_saida: $data, descricao: $descricao, valor: $valor, mov_type: $mov_type}';
+    return 'SaidaModel{codigo: $codigo, pessoa: $pessoa, responsavel: $responsavel, data_saida: $data, descricao: $descricao, valor: $valor, mov_type: $mov_type}';
   }
 
   factory SaidaModel.fromJson(Map<String, dynamic> json) {
     return SaidaModel(
         codigo: json['codigo'],
         pessoa: json['pessoa'],
+        responsavel: json['responsavel'],
         data_saida: DateTime.parse(json['data_saida']),
         descricao: json['descricao'],
         valor: json['valor'],
