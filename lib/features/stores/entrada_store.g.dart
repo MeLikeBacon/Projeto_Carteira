@@ -45,9 +45,10 @@ mixin _$EntradaStore on _EntradaStore, Store {
       AsyncAction('_EntradaStore.loadEntradas', context: context);
 
   @override
-  Future loadEntradas({String initialDate = '', String finalDate = ''}) {
-    return _$loadEntradasAsyncAction.run(() =>
-        super.loadEntradas(initialDate: initialDate, finalDate: finalDate));
+  Future loadEntradas(
+      {String initialDate = '', String finalDate = '', int? personId}) {
+    return _$loadEntradasAsyncAction.run(() => super.loadEntradas(
+        initialDate: initialDate, finalDate: finalDate, personId: personId));
   }
 
   late final _$_EntradaStoreActionController =

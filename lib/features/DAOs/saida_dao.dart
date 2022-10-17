@@ -10,15 +10,17 @@ class SaidaDao extends BaseDao<SaidaModel> {
   @override
   String get tableName => 'saida';
 
-  getSaidas({String initialDate = '', String finalDate = ''}) async {
+  getSaidas(
+      {String initialDate = '', String finalDate = '', int? personId}) async {
     List<SaidaModel> saidas = [];
 
     try {
       if (initialDate.isNotEmpty && finalDate.isNotEmpty) {
         saidas = await query(
-            "SELECT * FROM saida WHERE data_saida BETWEEN '$initialDate' AND '$finalDate'");
+            "SELECT * FROM saida WHERE (data_saida BETWEEN '$initialDate' AND '$finalDate') ${personId != null ? 'AND pessoa = $personId' : ''}");
       } else {
-        saidas = await query('SELECT * FROM saida');
+        saidas = await query(
+            'SELECT * FROM saida ${personId != null ? 'WHERE pessoa = $personId' : ''}');
       }
 
       return saidas;
