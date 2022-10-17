@@ -9,6 +9,42 @@ part of 'movs_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$MovsStore on _MovsStore, Store {
+  Computed<List<Movimento>>? _$movsTimelineComputed;
+
+  @override
+  List<Movimento> get movsTimeline => (_$movsTimelineComputed ??=
+          Computed<List<Movimento>>(() => super.movsTimeline,
+              name: '_MovsStore.movsTimeline'))
+      .value;
+  Computed<List<DateTime>>? _$movsDatesComputed;
+
+  @override
+  List<DateTime> get movsDates =>
+      (_$movsDatesComputed ??= Computed<List<DateTime>>(() => super.movsDates,
+              name: '_MovsStore.movsDates'))
+          .value;
+  Computed<double>? _$movsValuesMaxComputed;
+
+  @override
+  double get movsValuesMax =>
+      (_$movsValuesMaxComputed ??= Computed<double>(() => super.movsValuesMax,
+              name: '_MovsStore.movsValuesMax'))
+          .value;
+  Computed<List<double>>? _$movsValuesComputed;
+
+  @override
+  List<double> get movsValues =>
+      (_$movsValuesComputed ??= Computed<List<double>>(() => super.movsValues,
+              name: '_MovsStore.movsValues'))
+          .value;
+  Computed<List<double>>? _$movsValuesPercentComputed;
+
+  @override
+  List<double> get movsValuesPercent => (_$movsValuesPercentComputed ??=
+          Computed<List<double>>(() => super.movsValuesPercent,
+              name: '_MovsStore.movsValuesPercent'))
+      .value;
+
   late final _$movsAtom = Atom(name: '_MovsStore.movs', context: context);
 
   @override
@@ -44,9 +80,10 @@ mixin _$MovsStore on _MovsStore, Store {
       AsyncAction('_MovsStore.loadMovs', context: context);
 
   @override
-  Future loadMovs({String initialDate = '', String finalDate = ''}) {
-    return _$loadMovsAsyncAction.run(
-        () => super.loadMovs(initialDate: initialDate, finalDate: finalDate));
+  Future loadMovs(
+      {String initialDate = '', String finalDate = '', int? personId}) {
+    return _$loadMovsAsyncAction.run(() => super.loadMovs(
+        initialDate: initialDate, finalDate: finalDate, personId: personId));
   }
 
   late final _$_MovsStoreActionController =
@@ -67,7 +104,12 @@ mixin _$MovsStore on _MovsStore, Store {
   String toString() {
     return '''
 movs: ${movs},
-movsLoaded: ${movsLoaded}
+movsLoaded: ${movsLoaded},
+movsTimeline: ${movsTimeline},
+movsDates: ${movsDates},
+movsValuesMax: ${movsValuesMax},
+movsValues: ${movsValues},
+movsValuesPercent: ${movsValuesPercent}
     ''';
   }
 }

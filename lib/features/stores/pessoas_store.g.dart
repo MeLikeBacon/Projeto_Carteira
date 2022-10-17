@@ -25,6 +25,46 @@ mixin _$PessoasStore on _PessoasStore, Store {
     });
   }
 
+  late final _$pessoasAtom =
+      Atom(name: '_PessoasStore.pessoas', context: context);
+
+  @override
+  List<PessoaModel> get pessoas {
+    _$pessoasAtom.reportRead();
+    return super.pessoas;
+  }
+
+  @override
+  set pessoas(List<PessoaModel> value) {
+    _$pessoasAtom.reportWrite(value, super.pessoas, () {
+      super.pessoas = value;
+    });
+  }
+
+  late final _$pessoaLoadedAtom =
+      Atom(name: '_PessoasStore.pessoaLoaded', context: context);
+
+  @override
+  bool get pessoaLoaded {
+    _$pessoaLoadedAtom.reportRead();
+    return super.pessoaLoaded;
+  }
+
+  @override
+  set pessoaLoaded(bool value) {
+    _$pessoaLoadedAtom.reportWrite(value, super.pessoaLoaded, () {
+      super.pessoaLoaded = value;
+    });
+  }
+
+  late final _$loadPessoasAsyncAction =
+      AsyncAction('_PessoasStore.loadPessoas', context: context);
+
+  @override
+  Future loadPessoas() {
+    return _$loadPessoasAsyncAction.run(() => super.loadPessoas());
+  }
+
   late final _$_PessoasStoreActionController =
       ActionController(name: '_PessoasStore', context: context);
 
@@ -51,9 +91,22 @@ mixin _$PessoasStore on _PessoasStore, Store {
   }
 
   @override
+  dynamic emptyPessoas() {
+    final _$actionInfo = _$_PessoasStoreActionController.startAction(
+        name: '_PessoasStore.emptyPessoas');
+    try {
+      return super.emptyPessoas();
+    } finally {
+      _$_PessoasStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
-currentUser: ${currentUser}
+currentUser: ${currentUser},
+pessoas: ${pessoas},
+pessoaLoaded: ${pessoaLoaded}
     ''';
   }
 }

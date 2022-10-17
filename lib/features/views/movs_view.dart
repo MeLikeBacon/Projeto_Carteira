@@ -1,6 +1,7 @@
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:projeto_carteira/features/models/pessoa_model.dart';
 import 'package:provider/provider.dart';
 
@@ -29,7 +30,7 @@ class _MovsViewState extends State<MovsView> {
   final EntradaController _entradaController = EntradaController();
   final SaidaController _saidaController = SaidaController();
 
-  String? errorTextDate, dropUsers;
+  String? errorTextDate, errorTextValue, dropUsers;
 
   PessoaModel contaMovimento = PessoaModel();
 
@@ -37,18 +38,17 @@ class _MovsViewState extends State<MovsView> {
   void didChangeDependencies() async {
     super.didChangeDependencies();
     _pessoasStore = Provider.of<PessoasStore>(context);
-    await _pessoasStore.loadPessoas();
+    _pessoasStore.pessoas.isEmpty ? await _pessoasStore.loadPessoas() : null;
 
-    if (contaMovimento.codigo == null) {
+    if (contaMovimento.codigo == null && _pessoasStore.pessoaLoaded) {
       setPersonAffected(_pessoasStore.currentUser.codigo!);
     }
-
-    print('Current: ${_pessoasStore.currentUser.codigo!}');
-    print('Responsible: $contaMovimento');
   }
 
   setPersonAffected(int conta) {
     contaMovimento = _pessoasStore.pessoas[conta];
+    print('Current: ${_pessoasStore.currentUser.codigo!}');
+    print('Responsible: $contaMovimento');
   }
 
   @override
@@ -65,35 +65,40 @@ class _MovsViewState extends State<MovsView> {
         child: SingleChildScrollView(
             child: Column(
           children: [
-            Container(
-              constraints: const BoxConstraints(maxWidth: 700),
-              width: screenSize.width * 0.9,
-              child: DropdownButton(
-                isExpanded: true,
-                icon: const Icon(Icons.keyboard_arrow_down),
-                value: dropUsers,
-                hint: Text(
-                  'Usuário',
-                  style: TextStyle(fontSize: textSize),
-                ),
-                items: _pessoasStore.pessoas.map((PessoaModel pessoa) {
-                  return DropdownMenuItem<String>(
-                      value: pessoa.email,
-                      child: Text(
-                        pessoa.email!,
-                        style: TextStyle(fontSize: textSize),
-                      ));
-                }).toList(),
-                onChanged: (String? value) {
-                  setState(() {
-                    dropUsers = value ?? '';
-                    var resp = _pessoasStore.pessoas
-                        .firstWhere((pessoa) => pessoa.email == value);
-                    setPersonAffected(resp.codigo!);
-                  });
-                },
-              ),
-            ),
+            Observer(builder: ((context) {
+              return _pessoasStore.pessoaLoaded &&
+                      _pessoasStore.currentUser.codigo == 0
+                  ? Container(
+                      constraints: const BoxConstraints(maxWidth: 700),
+                      width: screenSize.width * 0.9,
+                      child: DropdownButton(
+                        isExpanded: true,
+                        icon: const Icon(Icons.keyboard_arrow_down),
+                        value: dropUsers,
+                        hint: Text(
+                          'Usuário',
+                          style: TextStyle(fontSize: textSize),
+                        ),
+                        items: _pessoasStore.pessoas.map((PessoaModel pessoa) {
+                          return DropdownMenuItem<String>(
+                              value: pessoa.email,
+                              child: Text(
+                                pessoa.email!,
+                                style: TextStyle(fontSize: textSize),
+                              ));
+                        }).toList(),
+                        onChanged: (String? value) {
+                          setState(() {
+                            dropUsers = value ?? '';
+                            var resp = _pessoasStore.pessoas
+                                .firstWhere((pessoa) => pessoa.email == value);
+                            setPersonAffected(resp.codigo!);
+                          });
+                        },
+                      ),
+                    )
+                  : const SizedBox();
+            })),
             Container(
               constraints: const BoxConstraints(maxWidth: 700),
               width: screenSize.width * 0.9,
@@ -106,7 +111,7 @@ class _MovsViewState extends State<MovsView> {
                   CentavosInputFormatter()
                 ],
                 decoration: InputDecoration(
-                  //errorText: '',
+                  errorText: errorTextValue,
                   labelText: 'Valor (R\$)',
                   suffixIcon: IconButton(
                     onPressed: _valueController.clear,
@@ -183,24 +188,26 @@ class _MovsViewState extends State<MovsView> {
               children: [
                 ElevatedButton(
                     onPressed: () {
-                      EntradaModel tempEntrada = EntradaModel(
-                          pessoa: contaMovimento.codigo,
-                          responsavel: _pessoasStore.currentUser.codigo,
-                          data_entrada:
-                              UtilData.obterDateTime(_dateController.text),
-                          descricao: _descController.text,
-                          valor: UtilBrasilFields.converterMoedaParaDouble(
-                              _valueController.text));
+                      if (filledForms()) {
+                        EntradaModel tempEntrada = EntradaModel(
+                            pessoa: contaMovimento.codigo,
+                            responsavel: _pessoasStore.currentUser.codigo,
+                            data_entrada:
+                                UtilData.obterDateTime(_dateController.text),
+                            descricao: _descController.text,
+                            valor: UtilBrasilFields.converterMoedaParaDouble(
+                                _valueController.text));
 
-                      setState(() {
-                        if (validDate()) {
-                          _entradaController.insertEntrada(
-                              tempEntrada, contaMovimento);
-                          errorTextDate = null;
-                        } else {
-                          errorTextDate = 'Data inválida';
-                        }
-                      });
+                        setState(() {
+                          if (validDate()) {
+                            _entradaController.insertEntrada(
+                                tempEntrada, contaMovimento);
+                            errorTextDate = null;
+                          } else {
+                            errorTextDate = 'Data inválida';
+                          }
+                        });
+                      }
                     },
                     style:
                         ButtonStyle(elevation: MaterialStateProperty.all(7.5)),
@@ -213,53 +220,56 @@ class _MovsViewState extends State<MovsView> {
                 ),
                 ElevatedButton(
                     onPressed: () {
-                      SaidaModel tempSaida = SaidaModel(
-                          pessoa: contaMovimento.codigo,
-                          responsavel: _pessoasStore.currentUser.codigo,
-                          data_saida:
-                              UtilData.obterDateTime(_dateController.text),
-                          descricao: _descController.text,
-                          valor: UtilBrasilFields.converterMoedaParaDouble(
-                              _valueController.text));
+                      if (filledForms()) {
+                        SaidaModel tempSaida = SaidaModel(
+                            pessoa: contaMovimento.codigo,
+                            responsavel: _pessoasStore.currentUser.codigo,
+                            data_saida:
+                                UtilData.obterDateTime(_dateController.text),
+                            descricao: _descController.text,
+                            valor: UtilBrasilFields.converterMoedaParaDouble(
+                                _valueController.text));
 
-                      setState(() {
-                        if (validDate()) {
-                          errorTextDate = null;
-                          if (contaMovimento.saldo! -
-                                  UtilBrasilFields.converterMoedaParaDouble(
-                                      _valueController.text) <
-                              contaMovimento.minimo!) {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) => AlertDialog(
-                                      title: const Text('Aviso de consumo!'),
-                                      content: Text(
-                                          'Fazer essa movimentação deixará seu saldo abaixo do seu mínimo definido de ${UtilBrasilFields.obterReal(_pessoasStore.currentUser.minimo!.toDouble())}, deseja continuar?'),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context, 'SIM');
-                                            _saidaController.insertSaida(
-                                                tempSaida, contaMovimento);
-                                          },
-                                          child: const Text('SIM'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context, 'NÃO');
-                                          },
-                                          child: const Text('NÃO'),
-                                        ),
-                                      ],
-                                    ));
+                        setState(() {
+                          if (validDate()) {
+                            errorTextDate = null;
+                            if (contaMovimento.saldo! -
+                                    UtilBrasilFields.converterMoedaParaDouble(
+                                        _valueController.text) <
+                                contaMovimento.minimo!) {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AlertDialog(
+                                        title: const Text('Aviso de consumo!'),
+                                        content: Text(
+                                            'Fazer essa movimentação deixará seu saldo abaixo do seu mínimo definido de ${UtilBrasilFields.obterReal(_pessoasStore.currentUser.minimo!.toDouble())}, deseja continuar?'),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context, 'SIM');
+                                              _saidaController.insertSaida(
+                                                  tempSaida, contaMovimento);
+                                            },
+                                            child: const Text('SIM'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context, 'NÃO');
+                                            },
+                                            child: const Text('NÃO'),
+                                          ),
+                                        ],
+                                      ));
+                            } else {
+                              _saidaController.insertSaida(
+                                  tempSaida, contaMovimento);
+                            }
                           } else {
-                            _saidaController.insertSaida(
-                                tempSaida, contaMovimento);
+                            errorTextDate = 'Data inválida';
                           }
-                        } else {
-                          errorTextDate = 'Data inválida';
-                        }
-                      });
+                        });
+                      }
                     },
                     style:
                         ButtonStyle(elevation: MaterialStateProperty.all(7.5)),
@@ -284,6 +294,24 @@ class _MovsViewState extends State<MovsView> {
             size: iconSize,
           )),
     );
+  }
+
+  bool filledForms() {
+    if (_dateController.text == '' || _valueController.text == '') {
+      setState(() {
+        if (_valueController.text == '') {
+          errorTextValue = 'Insira um valor';
+        }
+        if (_dateController.text == '') {
+          errorTextDate = 'Insira uma data';
+        }
+      });
+      return false;
+    } else {
+      errorTextDate = null;
+      errorTextValue = null;
+      return true;
+    }
   }
 
   validDate() {

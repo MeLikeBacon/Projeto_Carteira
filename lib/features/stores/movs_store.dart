@@ -23,13 +23,14 @@ abstract class _MovsStore with Store {
   bool movsLoaded = true;
 
   @action
-  loadMovs({String initialDate = '', String finalDate = ''}) async {
+  loadMovs(
+      {String initialDate = '', String finalDate = '', int? personId}) async {
     movsLoaded = false;
 
     movs.addAll(await _entradaDao.getEntradas(
-        initialDate: initialDate, finalDate: finalDate));
+        initialDate: initialDate, finalDate: finalDate, personId: personId));
     movs.addAll(await _saidaDao.getSaidas(
-        initialDate: initialDate, finalDate: finalDate));
+        initialDate: initialDate, finalDate: finalDate, personId: personId));
 
     movsLoaded = true;
   }
