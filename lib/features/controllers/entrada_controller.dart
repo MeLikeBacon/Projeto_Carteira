@@ -23,6 +23,10 @@ class EntradaController {
     await _entradaDao.delete(id, 'codigo');
   }
 
+  deleteSingleUserEntradas(int id) async {
+    await _entradaDao.delete(id, 'pessoa');
+  }
+
   updateEntradaField(int id, String column, String newer) {
     _entradaDao.update(id, column, newer);
   }

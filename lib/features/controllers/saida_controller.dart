@@ -22,6 +22,10 @@ class SaidaController {
     await _saidaDao.delete(id, 'codigo');
   }
 
+  deleteSingleUserSaidas(int id) async {
+    await _saidaDao.delete(id, 'pessoa');
+  }
+
   updateSaidaField(int id, String column, String newer) {
     _saidaDao.update(id, column, newer);
   }

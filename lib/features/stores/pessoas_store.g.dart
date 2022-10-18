@@ -57,6 +57,70 @@ mixin _$PessoasStore on _PessoasStore, Store {
     });
   }
 
+  late final _$nomeControlAtom =
+      Atom(name: '_PessoasStore.nomeControl', context: context);
+
+  @override
+  TextEditingController get nomeControl {
+    _$nomeControlAtom.reportRead();
+    return super.nomeControl;
+  }
+
+  @override
+  set nomeControl(TextEditingController value) {
+    _$nomeControlAtom.reportWrite(value, super.nomeControl, () {
+      super.nomeControl = value;
+    });
+  }
+
+  late final _$emailControlAtom =
+      Atom(name: '_PessoasStore.emailControl', context: context);
+
+  @override
+  TextEditingController get emailControl {
+    _$emailControlAtom.reportRead();
+    return super.emailControl;
+  }
+
+  @override
+  set emailControl(TextEditingController value) {
+    _$emailControlAtom.reportWrite(value, super.emailControl, () {
+      super.emailControl = value;
+    });
+  }
+
+  late final _$senhaControlAtom =
+      Atom(name: '_PessoasStore.senhaControl', context: context);
+
+  @override
+  TextEditingController get senhaControl {
+    _$senhaControlAtom.reportRead();
+    return super.senhaControl;
+  }
+
+  @override
+  set senhaControl(TextEditingController value) {
+    _$senhaControlAtom.reportWrite(value, super.senhaControl, () {
+      super.senhaControl = value;
+    });
+  }
+
+  late final _$minimoControlAtom =
+      Atom(name: '_PessoasStore.minimoControl', context: context);
+
+  @override
+  TextEditingController get minimoControl {
+    _$minimoControlAtom.reportRead();
+    return super.minimoControl;
+  }
+
+  @override
+  set minimoControl(TextEditingController value) {
+    _$minimoControlAtom.reportWrite(value, super.minimoControl, () {
+      super.minimoControl = value;
+    });
+  }
+
   late final _$loadPessoasAsyncAction =
       AsyncAction('_PessoasStore.loadPessoas', context: context);
 
@@ -74,6 +138,17 @@ mixin _$PessoasStore on _PessoasStore, Store {
         name: '_PessoasStore.changeUser');
     try {
       return super.changeUser(newUser);
+    } finally {
+      _$_PessoasStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void deleteUser(int id) {
+    final _$actionInfo = _$_PessoasStoreActionController.startAction(
+        name: '_PessoasStore.deleteUser');
+    try {
+      return super.deleteUser(id);
     } finally {
       _$_PessoasStoreActionController.endAction(_$actionInfo);
     }
@@ -102,11 +177,26 @@ mixin _$PessoasStore on _PessoasStore, Store {
   }
 
   @override
+  dynamic clearAllControls() {
+    final _$actionInfo = _$_PessoasStoreActionController.startAction(
+        name: '_PessoasStore.clearAllControls');
+    try {
+      return super.clearAllControls();
+    } finally {
+      _$_PessoasStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 currentUser: ${currentUser},
 pessoas: ${pessoas},
-pessoaLoaded: ${pessoaLoaded}
+pessoaLoaded: ${pessoaLoaded},
+nomeControl: ${nomeControl},
+emailControl: ${emailControl},
+senhaControl: ${senhaControl},
+minimoControl: ${minimoControl}
     ''';
   }
 }

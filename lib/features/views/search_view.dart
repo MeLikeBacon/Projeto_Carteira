@@ -10,6 +10,7 @@ import 'package:projeto_carteira/features/stores/saida_store.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
+import '../components/homeFAB.dart';
 import '../models/pessoa_model.dart';
 import '../stores/pessoas_store.dart';
 
@@ -49,6 +50,7 @@ class _SearchViewState extends State<SearchView> {
   }
 
   final List<String> _range = ['', ''];
+
   void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
     setState(() {
       if (args.value is PickerDateRange) {
@@ -221,15 +223,7 @@ class _SearchViewState extends State<SearchView> {
           ),
           Row(
             children: [
-              FloatingActionButton(
-                  heroTag: 'Home',
-                  onPressed: () {
-                    Navigator.pushReplacementNamed(context, '/home');
-                  },
-                  child: Icon(
-                    Icons.home,
-                    size: iconSize,
-                  )),
+              HomeFAB(iconSize: iconSize),
               const SizedBox(
                 width: 15,
               ),

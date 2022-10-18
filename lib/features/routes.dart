@@ -1,6 +1,7 @@
 // ignore_for_file: constant_identifier_names, prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:projeto_carteira/features/views/admin_view.dart';
 import 'package:projeto_carteira/features/views/forgor_view.dart';
 import 'package:projeto_carteira/features/views/home_view.dart';
 import 'package:projeto_carteira/features/views/login_view.dart';
@@ -27,6 +28,7 @@ class Routes {
   static const plots_view = '/plots';
   static const manage_view = '/manage';
   static const userlist_view = '/userlist';
+  static const adm_view = '/adm';
 
   static Map<String, Widget Function(BuildContext)> routes = {
     home_view: (BuildContext context) => HomeView(),
@@ -40,6 +42,7 @@ class Routes {
     plots_view: (BuildContext context) => PlotsView(),
     manage_view: (BuildContext context) => ManageView(),
     userlist_view: (BuildContext context) => UserListView(),
+    adm_view: (BuildContext context) => AdminView(),
   };
 
   static GlobalKey<NavigatorState>? navigatorKey = GlobalKey<NavigatorState>();

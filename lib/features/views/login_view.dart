@@ -157,7 +157,11 @@ class _LoginViewState extends State<LoginView> {
                                 _controllerEmail.text, _controllerSenha.text);
                         if (userlogin.isNotEmpty) {
                           _pessoasStore.changeUser(userlogin.first);
-                          Navigator.pushReplacementNamed(context, '/home');
+                          if (userlogin.first.codigo == 0) {
+                            Navigator.pushReplacementNamed(context, '/adm');
+                          } else {
+                            Navigator.pushReplacementNamed(context, '/home');
+                          }
                         } else {}
                       },
                       child: Text(
