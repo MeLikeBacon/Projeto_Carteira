@@ -20,21 +20,9 @@ class _AdminViewState extends State<AdminView> {
     Icons.logout,
   ];
 
-  List<String> iconLabels = [
-    'Cadastrar usuários',
-    'Consultar usuários',
-    'Movimentar',
-    'Consultar movimentos',
-    'Sair'
-  ];
+  List<String> iconLabels = ['Cadastrar usuários', 'Consultar usuários', 'Movimentar', 'Consultar movimentos', 'Sair'];
 
-  List<String> iconRefs = [
-    '/manage',
-    '/userlist',
-    '/movs',
-    '/search',
-    '/login'
-  ];
+  List<String> iconRefs = ['/manage', '/userlist', '/movs', '/search', '/login'];
 
   late PessoasStore _pessoasStore;
 
@@ -49,8 +37,7 @@ class _AdminViewState extends State<AdminView> {
     var screenSize = MediaQuery.of(context).size;
     var textSize = 14 + MediaQuery.of(context).size.width * 0.0075;
     var iconSize = 40 + MediaQuery.of(context).size.width * 0.0075;
-    bool screenVertical =
-        MediaQuery.of(context).orientation == Orientation.portrait;
+    bool screenVertical = MediaQuery.of(context).orientation == Orientation.portrait;
 
     void deslogar() {
       showDialog(
@@ -63,8 +50,7 @@ class _AdminViewState extends State<AdminView> {
                     onPressed: () {
                       Navigator.pop(context, 'SIM');
                       _pessoasStore.logout();
-                      Navigator.pushNamedAndRemoveUntil(
-                          context, '/login', ModalRoute.withName('/'));
+                      Navigator.pushNamedAndRemoveUntil(context, '/login', ModalRoute.withName('/'));
                     },
                     child: const Text('SIM'),
                   ),
@@ -81,7 +67,6 @@ class _AdminViewState extends State<AdminView> {
     return Scaffold(
       appBar: MyAppBar(),
       body: ListView.separated(
-          scrollDirection: screenVertical ? Axis.vertical : Axis.horizontal,
           itemBuilder: (BuildContext context, int index) {
             return ListTile(
               leading: Icon(iconButtons[index]),
@@ -95,8 +80,7 @@ class _AdminViewState extends State<AdminView> {
               },
             );
           },
-          separatorBuilder: (BuildContext context, int index) =>
-              const Divider(),
+          separatorBuilder: (BuildContext context, int index) => const Divider(),
           itemCount: iconLabels.length),
     );
   }

@@ -9,6 +9,7 @@ class PessoaModel extends Entity {
   String? senha;
   double? minimo;
   double? saldo;
+  String? tipo;
 
   PessoaModel(
       {this.codigo,
@@ -16,7 +17,8 @@ class PessoaModel extends Entity {
       this.email,
       this.senha,
       this.minimo,
-      this.saldo = 0});
+      this.saldo = 0,
+      this.tipo = 'user'});
 
   @override
   Map<String, dynamic> toMap() {
@@ -26,13 +28,14 @@ class PessoaModel extends Entity {
       'email': email,
       'senha': senha,
       'minimo': minimo,
-      'saldo': saldo
+      'saldo': saldo,
+      'tipo': tipo
     };
   }
 
   @override
   String toString() {
-    return 'PessoaModel{codigo: $codigo, nome: $nome, email: $email, senha: $senha, saldo: $saldo, minimo: $minimo}';
+    return 'PessoaModel{codigo: $codigo, nome: $nome, email: $email, senha: $senha, saldo: $saldo, minimo: $minimo, tipo: $tipo}';
   }
 
   PessoaModel copyWith(
@@ -41,14 +44,16 @@ class PessoaModel extends Entity {
       String? email,
       String? senha,
       double? saldo,
-      double? minimo}) {
+      double? minimo,
+      String? tipo}) {
     return PessoaModel(
         codigo: codigo ?? this.codigo,
         nome: nome ?? this.nome,
         email: email ?? this.email,
         senha: senha ?? this.senha,
         saldo: saldo ?? this.saldo,
-        minimo: minimo ?? this.minimo);
+        minimo: minimo ?? this.minimo,
+        tipo: tipo ?? this.tipo);
   }
 
   factory PessoaModel.fromJson(Map<String, dynamic> json) {
@@ -58,7 +63,8 @@ class PessoaModel extends Entity {
         email: json['email'],
         senha: json['senha'],
         saldo: json['saldo'],
-        minimo: json['minimo']);
+        minimo: json['minimo'],
+        tipo: json['tipo']);
   }
 
   String toJson() => json.encode(toMap());

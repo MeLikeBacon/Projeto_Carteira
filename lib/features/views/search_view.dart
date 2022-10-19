@@ -47,6 +47,8 @@ class _SearchViewState extends State<SearchView> {
     _entradaStore.entradas.isEmpty ? _entradaStore.loadEntradas() : null;
     _saidaStore.saidas.isEmpty ? _saidaStore.loadSaidas() : null;
     _movsStore.movs.isEmpty ? _movsStore.loadMovs() : null;
+    dropUsers = _pessoasStore.getLowerUsers().first.email;
+    selectedPersonId = _pessoasStore.getLowerUsers().first.codigo;
   }
 
   final List<String> _range = ['', ''];
@@ -56,8 +58,7 @@ class _SearchViewState extends State<SearchView> {
       if (args.value is PickerDateRange) {
         _range[0] = DateFormat('yyyy-MM-dd').format(args.value.startDate);
         // ignore: lines_longer_than_80_chars
-        _range[1] = DateFormat('yyyy-MM-dd')
-            .format(args.value.endDate ?? args.value.startDate);
+        _range[1] = DateFormat('yyyy-MM-dd').format(args.value.endDate ?? args.value.startDate);
       }
     });
     print('_range: $_range');
@@ -87,16 +88,14 @@ class _SearchViewState extends State<SearchView> {
         title: 'Consulta',
         actions: [
           IconButton(
-              onPressed: (() =>
-                  Navigator.pushReplacementNamed(context, '/pdf')),
+              onPressed: (() => Navigator.pushReplacementNamed(context, '/pdf')),
               icon: const Icon(
                 Icons.picture_as_pdf,
                 size: 40,
                 color: Color.fromARGB(255, 10, 57, 95),
               )),
           IconButton(
-              onPressed: (() =>
-                  Navigator.pushReplacementNamed(context, '/plots')),
+              onPressed: (() => Navigator.pushReplacementNamed(context, '/plots')),
               icon: const Icon(
                 Icons.query_stats,
                 size: 40,
@@ -108,16 +107,13 @@ class _SearchViewState extends State<SearchView> {
           heightFactor: 1,
           child: Observer(
             builder: ((context) {
-              return _movsStore.movsLoaded &&
-                      _saidaStore.saidaLoaded &&
-                      _entradaStore.entradaLoaded
+              return _movsStore.movsLoaded && _saidaStore.saidaLoaded && _entradaStore.entradaLoaded
                   ? SingleChildScrollView(
                       child: Column(
                         children: [
-                          _pessoasStore.currentUser.codigo == 0
+                          _pessoasStore.currentUser.tipo == 'adm'
                               ? Container(
-                                  constraints:
-                                      const BoxConstraints(maxWidth: 500),
+                                  constraints: const BoxConstraints(maxWidth: 500),
                                   width: screenSize.width * 0.9,
                                   child: DropdownButton(
                                     isExpanded: true,
@@ -127,22 +123,19 @@ class _SearchViewState extends State<SearchView> {
                                       'Usuário',
                                       style: TextStyle(fontSize: textSize),
                                     ),
-                                    items: _pessoasStore.pessoas
-                                        .map((PessoaModel pessoa) {
+                                    items: _pessoasStore.getLowerUsers().map((PessoaModel pessoa) {
                                       return DropdownMenuItem<String>(
                                           value: pessoa.email,
                                           child: Text(
                                             pessoa.email!,
-                                            style:
-                                                TextStyle(fontSize: textSize),
+                                            style: TextStyle(fontSize: textSize),
                                           ));
                                     }).toList(),
                                     onChanged: (String? value) {
                                       setState(() {
                                         dropUsers = value ?? '';
-                                        var resp = _pessoasStore.pessoas
-                                            .firstWhere((pessoa) =>
-                                                pessoa.email == value);
+                                        var resp =
+                                            _pessoasStore.getLowerUsers().firstWhere((pessoa) => pessoa.email == value);
                                         selectedPersonId = resp.codigo;
                                         setFilter();
                                       });
@@ -174,8 +167,7 @@ class _SearchViewState extends State<SearchView> {
                 style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.blue),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)))),
+                        RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)))),
                 child: Container(
                   alignment: Alignment.center,
                   height: 56,
@@ -207,14 +199,12 @@ class _SearchViewState extends State<SearchView> {
                         consultaDrop = value;
                       });
                     }),
-                    items: consultaItems
-                        .map<DropdownMenuItem<String>>((String value) {
+                    items: consultaItems.map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(
                           value,
-                          style: TextStyle(
-                              fontSize: textSize, color: Colors.white),
+                          style: TextStyle(fontSize: textSize, color: Colors.white),
                         ),
                       );
                     }).toList(),
@@ -230,8 +220,7 @@ class _SearchViewState extends State<SearchView> {
               SpeedDial(
                 icon: Icons.event,
                 spaceBetweenChildren: 6,
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(15))),
+                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15))),
                 children: [
                   SpeedDialChild(
                       child: const Icon(Icons.refresh),
@@ -246,14 +235,12 @@ class _SearchViewState extends State<SearchView> {
                           builder: (BuildContext context) => AlertDialog(
                                 title: const Text('Filtrar intervalo de tempo'),
                                 content: ConstrainedBox(
-                                  constraints: const BoxConstraints(
-                                      maxWidth: 700, maxHeight: 300),
+                                  constraints: const BoxConstraints(maxWidth: 700, maxHeight: 300),
                                   child: Container(
                                     width: screenSize.width * 0.75,
                                     child: SfDateRangePicker(
                                       onSelectionChanged: _onSelectionChanged,
-                                      selectionMode:
-                                          DateRangePickerSelectionMode.range,
+                                      selectionMode: DateRangePickerSelectionMode.range,
                                     ),
                                   ),
                                 ),
@@ -282,19 +269,17 @@ class _SearchViewState extends State<SearchView> {
                   SpeedDialChild(
                       child: const Text('7 dias'),
                       onTap: () => setState(() {
-                            dataRangeStart = DateFormat('yyyy-MM-dd').format(
-                                DateTime.now().add(const Duration(days: -7)));
-                            dataRangeEnd =
-                                DateFormat('yyyy-MM-dd').format(DateTime.now());
+                            dataRangeStart =
+                                DateFormat('yyyy-MM-dd').format(DateTime.now().add(const Duration(days: -7)));
+                            dataRangeEnd = DateFormat('yyyy-MM-dd').format(DateTime.now());
                             defineDataRange();
                           })),
                   SpeedDialChild(
                       child: const Text('15 dias'),
                       onTap: () => setState(() {
-                            dataRangeStart = DateFormat('yyyy-MM-dd').format(
-                                DateTime.now().add(const Duration(days: -15)));
-                            dataRangeEnd =
-                                DateFormat('yyyy-MM-dd').format(DateTime.now());
+                            dataRangeStart =
+                                DateFormat('yyyy-MM-dd').format(DateTime.now().add(const Duration(days: -15)));
+                            dataRangeEnd = DateFormat('yyyy-MM-dd').format(DateTime.now());
                             defineDataRange();
                           })),
                 ],
@@ -306,48 +291,27 @@ class _SearchViewState extends State<SearchView> {
     );
   }
 
-  setFilter(
-      {String initialDate = '',
-      String finalDate = '',
-      bool clean = false}) async {
+  setFilter({String initialDate = '', String finalDate = '', bool clean = false}) async {
     if (clean) {
       _movsStore.emptyMovs();
-      await _movsStore.loadMovs(
-          initialDate: initialDate,
-          finalDate: finalDate,
-          personId: selectedPersonId);
+      await _movsStore.loadMovs(initialDate: initialDate, finalDate: finalDate, personId: selectedPersonId);
       _entradaStore.emptyEntradas();
-      await _entradaStore.loadEntradas(
-          initialDate: initialDate,
-          finalDate: finalDate,
-          personId: selectedPersonId);
+      await _entradaStore.loadEntradas(initialDate: initialDate, finalDate: finalDate, personId: selectedPersonId);
       _saidaStore.emptySaidas();
-      await _saidaStore.loadSaidas(
-          initialDate: initialDate,
-          finalDate: finalDate,
-          personId: selectedPersonId);
+      await _saidaStore.loadSaidas(initialDate: initialDate, finalDate: finalDate, personId: selectedPersonId);
     } else {
       switch (consultaDrop) {
         case 'Entradas e Saídas':
           _movsStore.emptyMovs();
-          await _movsStore.loadMovs(
-              initialDate: initialDate,
-              finalDate: finalDate,
-              personId: selectedPersonId);
+          await _movsStore.loadMovs(initialDate: initialDate, finalDate: finalDate, personId: selectedPersonId);
           break;
         case 'Entradas':
           _entradaStore.emptyEntradas();
-          await _entradaStore.loadEntradas(
-              initialDate: initialDate,
-              finalDate: finalDate,
-              personId: selectedPersonId);
+          await _entradaStore.loadEntradas(initialDate: initialDate, finalDate: finalDate, personId: selectedPersonId);
           break;
         case 'Saídas':
           _saidaStore.emptySaidas();
-          await _saidaStore.loadSaidas(
-              initialDate: initialDate,
-              finalDate: finalDate,
-              personId: selectedPersonId);
+          await _saidaStore.loadSaidas(initialDate: initialDate, finalDate: finalDate, personId: selectedPersonId);
           break;
       }
     }

@@ -1,7 +1,9 @@
+import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:mobx/mobx.dart';
 import 'package:projeto_carteira/features/DAOs/pessoa_dao.dart';
 import 'package:projeto_carteira/features/controllers/pessoa_controller.dart';
+import 'package:collection/collection.dart';
 
 import '../models/pessoa_model.dart';
 
@@ -24,6 +26,17 @@ abstract class _PessoasStore with Store {
 
   @observable
   bool pessoaLoaded = true;
+
+  @computed
+  List<PessoaModel> getLowerUsers() {
+    List<PessoaModel?> list = pessoas.map((e) {
+      if (e.tipo != currentUser.tipo) {
+        return e;
+      }
+    }).toList();
+
+    return list.whereNotNull().toList();
+  }
 
   @action
   void changeUser(PessoaModel newUser) {
@@ -66,11 +79,38 @@ abstract class _PessoasStore with Store {
   @observable
   TextEditingController minimoControl = TextEditingController();
 
+  @observable
+  TextEditingController saldoControl = TextEditingController();
+
+  @observable
+  String userType = '';
+
+  @action
+  setUserType(value) {
+    userType = value;
+  }
+
+  @action
+  PessoaModel getTempPessoa() {
+    PessoaModel temp = PessoaModel();
+
+    temp
+      ..nome = nomeControl.text
+      ..email = emailControl.text
+      ..senha = senhaControl.text
+      ..minimo = UtilBrasilFields.converterMoedaParaDouble(minimoControl.text.isNotEmpty ? minimoControl.text : '0')
+      ..saldo = UtilBrasilFields.converterMoedaParaDouble(saldoControl.text.isNotEmpty ? saldoControl.text : '0')
+      ..tipo = userType;
+
+    return temp;
+  }
+
   @action
   clearAllControls() {
     nomeControl.clear();
     emailControl.clear();
     senhaControl.clear();
     minimoControl.clear();
+    saldoControl.clear();
   }
 }

@@ -42,13 +42,11 @@ class _LoginViewState extends State<LoginView> {
   }
 
   checkNotifications() async {
-    await Provider.of<NotificationService>(context, listen: false)
-        .checkForNotifications();
+    await Provider.of<NotificationService>(context, listen: false).checkForNotifications();
   }
 
   initializeFirebaseMessaging() async {
-    await Provider.of<FirebaseMessagingService>(context, listen: false)
-        .initialize();
+    await Provider.of<FirebaseMessagingService>(context, listen: false).initialize();
   }
 
   @override
@@ -74,8 +72,7 @@ class _LoginViewState extends State<LoginView> {
               ClipRRect(
                 child: Container(
                   padding: const EdgeInsets.all(10),
-                  decoration: const BoxDecoration(
-                      shape: BoxShape.circle, color: Colors.lightBlue),
+                  decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.lightBlue),
                   child: const Icon(
                     Icons.wallet,
                     size: 150,
@@ -138,8 +135,7 @@ class _LoginViewState extends State<LoginView> {
                 child: RichText(
                     text: TextSpan(
                         text: 'Esqueceu a senha?',
-                        style: TextStyle(
-                            fontSize: textSize - 4, color: Colors.lightBlue),
+                        style: TextStyle(fontSize: textSize - 4, color: Colors.lightBlue),
                         recognizer: TapGestureRecognizer()
                           ..onTap = (() {
                             Navigator.pushReplacementNamed(context, '/forgor');
@@ -153,11 +149,10 @@ class _LoginViewState extends State<LoginView> {
                   child: ElevatedButton(
                       onPressed: () async {
                         List<PessoaModel> userlogin =
-                            await _pessoaController.logInPessoa(
-                                _controllerEmail.text, _controllerSenha.text);
+                            await _pessoaController.logInPessoa(_controllerEmail.text, _controllerSenha.text);
                         if (userlogin.isNotEmpty) {
                           _pessoasStore.changeUser(userlogin.first);
-                          if (userlogin.first.codigo == 0) {
+                          if (userlogin.first.tipo == 'adm') {
                             Navigator.pushReplacementNamed(context, '/adm');
                           } else {
                             Navigator.pushReplacementNamed(context, '/home');

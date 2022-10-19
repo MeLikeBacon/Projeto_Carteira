@@ -121,6 +121,38 @@ mixin _$PessoasStore on _PessoasStore, Store {
     });
   }
 
+  late final _$saldoControlAtom =
+      Atom(name: '_PessoasStore.saldoControl', context: context);
+
+  @override
+  TextEditingController get saldoControl {
+    _$saldoControlAtom.reportRead();
+    return super.saldoControl;
+  }
+
+  @override
+  set saldoControl(TextEditingController value) {
+    _$saldoControlAtom.reportWrite(value, super.saldoControl, () {
+      super.saldoControl = value;
+    });
+  }
+
+  late final _$userTypeAtom =
+      Atom(name: '_PessoasStore.userType', context: context);
+
+  @override
+  String get userType {
+    _$userTypeAtom.reportRead();
+    return super.userType;
+  }
+
+  @override
+  set userType(String value) {
+    _$userTypeAtom.reportWrite(value, super.userType, () {
+      super.userType = value;
+    });
+  }
+
   late final _$loadPessoasAsyncAction =
       AsyncAction('_PessoasStore.loadPessoas', context: context);
 
@@ -177,6 +209,28 @@ mixin _$PessoasStore on _PessoasStore, Store {
   }
 
   @override
+  dynamic setUserType(dynamic value) {
+    final _$actionInfo = _$_PessoasStoreActionController.startAction(
+        name: '_PessoasStore.setUserType');
+    try {
+      return super.setUserType(value);
+    } finally {
+      _$_PessoasStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  PessoaModel getTempPessoa() {
+    final _$actionInfo = _$_PessoasStoreActionController.startAction(
+        name: '_PessoasStore.getTempPessoa');
+    try {
+      return super.getTempPessoa();
+    } finally {
+      _$_PessoasStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   dynamic clearAllControls() {
     final _$actionInfo = _$_PessoasStoreActionController.startAction(
         name: '_PessoasStore.clearAllControls');
@@ -196,7 +250,9 @@ pessoaLoaded: ${pessoaLoaded},
 nomeControl: ${nomeControl},
 emailControl: ${emailControl},
 senhaControl: ${senhaControl},
-minimoControl: ${minimoControl}
+minimoControl: ${minimoControl},
+saldoControl: ${saldoControl},
+userType: ${userType}
     ''';
   }
 }

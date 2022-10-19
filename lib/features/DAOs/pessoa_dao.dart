@@ -32,12 +32,14 @@ class PessoaDao extends BaseDao<PessoaModel> {
   updateUser(PessoaModel updatedPessoa) async {
     try {
       await query(
-          'UPDATE pessoas SET nome = ?, email = ?, senha = ?, minimo = ? WHERE codigo = ?;',
+          'UPDATE pessoas SET nome = ?, email = ?, senha = ?, minimo = ?, saldo = ?, tipo = ? WHERE codigo = ?;',
           [
             updatedPessoa.nome,
             updatedPessoa.email,
             updatedPessoa.senha,
             updatedPessoa.minimo,
+            updatedPessoa.saldo,
+            updatedPessoa.tipo,
             updatedPessoa.codigo
           ]);
       print('updated user, id: ${updatedPessoa.codigo}');

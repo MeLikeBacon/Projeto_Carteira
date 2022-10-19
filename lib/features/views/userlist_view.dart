@@ -27,7 +27,8 @@ class _UserListViewState extends State<UserListView> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _pessoasStore = Provider.of<PessoasStore>(context);
-    _pessoasStore.pessoas.isEmpty ? _pessoasStore.loadPessoas() : null;
+    _pessoasStore.loadPessoas();
+    //_pessoasStore.pessoas.isEmpty ? _pessoasStore.loadPessoas() : null;
   }
 
   @override
@@ -35,8 +36,7 @@ class _UserListViewState extends State<UserListView> {
     var screenSize = MediaQuery.of(context).size;
     var textSize = 11 + MediaQuery.of(context).size.width * 0.0075;
     var iconSize = 25 + MediaQuery.of(context).size.width * 0.0075;
-    bool screenVertical =
-        MediaQuery.of(context).orientation == Orientation.portrait;
+    bool screenVertical = MediaQuery.of(context).orientation == Orientation.portrait;
     return Scaffold(
         appBar: MyAppBar(
           actions: [
@@ -68,100 +68,82 @@ class _UserListViewState extends State<UserListView> {
         ),
         body: Observer(
           builder: ((context) {
-            return _pessoasStore.pessoaLoaded
-                ? _pessoasStore.pessoas.length > 1
-                    ? ListView.separated(
-                        scrollDirection:
-                            screenVertical ? Axis.vertical : Axis.horizontal,
-                        itemBuilder: (BuildContext context, int index) {
-                          if (_pessoasStore.pessoas[index].codigo != 0) {
-                            return ListTile(
-                                selectedColor: Colors.blue,
-                                selected: _selected.contains(
-                                    _pessoasStore.pessoas[index].codigo),
-                                onTap: () {
-                                  setState(() {
-                                    _selected.contains(
-                                            _pessoasStore.pessoas[index].codigo)
-                                        ? _selected.remove(
-                                            _pessoasStore.pessoas[index].codigo)
-                                        : _selected.add(_pessoasStore
-                                            .pessoas[index].codigo!);
-                                  });
-                                  print(_selected);
-                                },
-                                onLongPress: () {
-                                  print(_pessoasStore.pessoas[index]);
-                                },
-                                leading: Text(
-                                  _pessoasStore.pessoas[index].codigo
-                                      .toString(),
-                                  style: TextStyle(
-                                      fontSize: textSize,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                title: Text(
-                                  _pessoasStore.pessoas[index].nome!,
-                                  style: TextStyle(
-                                      fontSize: textSize + 1,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                subtitle:
-                                    Text(_pessoasStore.pessoas[index].email!,
+            return Column(
+              children: [
+                SizedBox(
+                  height: 40,
+                  child: ListTile(
+                    leading: Text('ID', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
+                    title: Text('NOME / E-MAIL', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
+                    trailing: Text('SALDO (R\$)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
+                  ),
+                ),
+                Expanded(
+                  child: _pessoasStore.pessoaLoaded
+                      ? _pessoasStore.getLowerUsers().isNotEmpty
+                          ? ListView.separated(
+                              itemBuilder: (BuildContext context, int index) {
+                                return ListTile(
+                                    selectedColor: Colors.blue,
+                                    selected: _selected.contains(_pessoasStore.getLowerUsers()[index].codigo),
+                                    onTap: () {
+                                      setState(() {
+                                        _selected.contains(_pessoasStore.getLowerUsers()[index].codigo)
+                                            ? _selected.remove(_pessoasStore.getLowerUsers()[index].codigo)
+                                            : _selected.add(_pessoasStore.getLowerUsers()[index].codigo!);
+                                      });
+                                      print(_selected);
+                                    },
+                                    onLongPress: () {
+                                      print(_pessoasStore.getLowerUsers()[index]);
+                                    },
+                                    leading: Text(
+                                      _pessoasStore.getLowerUsers()[index].codigo.toString(),
+                                      style: TextStyle(fontSize: textSize, fontWeight: FontWeight.bold),
+                                    ),
+                                    title: Text(
+                                      _pessoasStore.getLowerUsers()[index].nome!,
+                                      style: TextStyle(fontSize: textSize + 1, fontWeight: FontWeight.bold),
+                                    ),
+                                    subtitle: Text(_pessoasStore.getLowerUsers()[index].email!,
                                         style: TextStyle(
                                           fontSize: textSize - 2,
                                         )),
-                                trailing: Text(
-                                  UtilBrasilFields.obterReal(
-                                      _pessoasStore.pessoas[index].saldo!),
-                                  style: TextStyle(
-                                    fontSize: textSize,
-                                  ),
-                                ));
-                          } else {
-                            return ListTile(
-                              leading: Text(
-                                'ID',
-                                style: TextStyle(
-                                    fontSize: textSize,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              title: Text(
-                                'NOME/E-MAIL',
-                                style: TextStyle(
-                                    fontSize: textSize + 1,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              trailing: Text('SALDO',
-                                  style: TextStyle(
-                                      fontSize: textSize,
-                                      fontWeight: FontWeight.bold)),
-                            );
-                          }
-                        },
-                        separatorBuilder: (BuildContext context, int index) =>
-                            Divider(
-                              height: 10,
-                              color: Colors.black.withOpacity(
-                                  _pessoasStore.pessoas[index].codigo != 0
-                                      ? .25
-                                      : .75),
-                              thickness:
-                                  _pessoasStore.pessoas[index].codigo != 0
-                                      ? 1
-                                      : 2,
-                            ),
-                        //
-                        itemCount: _pessoasStore.pessoas.length)
-                    : Center(
-                        child: Text('Lista de usuários vazia',
-                            style: TextStyle(
-                                fontSize: textSize,
-                                fontWeight: FontWeight.bold)),
-                      )
-                : const Center(
-                    child: CircularProgressIndicator(),
-                  );
+                                    trailing: Text(
+                                      UtilBrasilFields.obterReal(_pessoasStore.getLowerUsers()[index].saldo!),
+                                      style: TextStyle(
+                                        fontSize: textSize,
+                                      ),
+                                    ));
+
+                                /*if (_pessoasStore.pessoas[index].codigo == 0) {
+                                  return ListTile(
+                                    leading: Text(
+                                      'ID',
+                                      style: TextStyle(fontSize: textSize, fontWeight: FontWeight.bold),
+                                    ),
+                                    title: Text(
+                                      'NOME/E-MAIL',
+                                      style: TextStyle(fontSize: textSize + 1, fontWeight: FontWeight.bold),
+                                    ),
+                                    trailing:
+                                        Text('SALDO', style: TextStyle(fontSize: textSize, fontWeight: FontWeight.bold)),
+                                  );
+                                }*/
+                              },
+                              separatorBuilder: (BuildContext context, int index) => const Divider(),
+                              //
+                              itemCount: _pessoasStore.getLowerUsers().length)
+                          : Center(
+                              child: Text('Lista de usuários vazia',
+                                  style: TextStyle(fontSize: textSize, fontWeight: FontWeight.bold)),
+                            )
+                      : const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                ),
+              ],
+            );
           }),
         ),
         floatingActionButton: HomeFAB(

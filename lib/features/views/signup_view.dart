@@ -35,8 +35,7 @@ class _SignUpViewState extends State<SignUpView> {
           children: [
             Text(
               'Registre-se!',
-              style: TextStyle(
-                  fontSize: textSize + 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: textSize + 20, fontWeight: FontWeight.bold),
             ),
             ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 700),
@@ -115,9 +114,10 @@ class _SignUpViewState extends State<SignUpView> {
                   children: [
                     Text(
                       'Saldo mínimo',
-                      style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                          color: Theme.of(context).hintColor,
-                          fontSize: textSize),
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelLarge!
+                          .copyWith(color: Theme.of(context).hintColor, fontSize: textSize),
                     ),
                     Slider(
                       value: _controllerMinimo,
@@ -162,11 +162,8 @@ class _SignUpViewState extends State<SignUpView> {
                     ),
                   ),
                   ElevatedButton(
-                      style: ButtonStyle(
-                          shape:
-                              MaterialStateProperty.all(const CircleBorder())),
-                      onPressed: () =>
-                          Navigator.pushReplacementNamed(context, '/login'),
+                      style: ButtonStyle(shape: MaterialStateProperty.all(const CircleBorder())),
+                      onPressed: () => Navigator.pushReplacementNamed(context, '/login'),
                       child: Icon(
                         Icons.undo,
                         size: iconSize,
@@ -195,25 +192,17 @@ class _SignUpViewState extends State<SignUpView> {
   void loginFun(PessoaModel tempPessoa) async {
     bool hasDuplicate;
 
-    if (_controllerNome.text.isEmpty ||
-        _controllerEmail.text.isEmpty ||
-        _controllerSenha.text.isEmpty) {
+    if (_controllerNome.text.isEmpty || _controllerEmail.text.isEmpty || _controllerSenha.text.isEmpty) {
       setState(() {
-        _controllerNome.text.isEmpty
-            ? errorTextNome = 'Este campo está incompleto'
-            : errorTextNome = null;
-        _controllerEmail.text.isEmpty
-            ? errorTextEmail = 'Este campo está incompleto'
-            : errorTextEmail = null;
-        _controllerSenha.text.isEmpty
-            ? errorTextSenha = 'Este campo está incompleto'
-            : errorTextSenha = null;
+        _controllerNome.text.isEmpty ? errorTextNome = 'Este campo está incompleto' : errorTextNome = null;
+        _controllerEmail.text.isEmpty ? errorTextEmail = 'Este campo está incompleto' : errorTextEmail = null;
+        _controllerSenha.text.isEmpty ? errorTextSenha = 'Este campo está incompleto' : errorTextSenha = null;
       });
       clearTextControllers();
       hasDuplicate = true;
       return;
     } else {
-      hasDuplicate = await _pessoaController.insertPessoa(context, tempPessoa);
+      hasDuplicate = await _pessoaController.insertPessoa(tempPessoa);
     }
     if (hasDuplicate) {
       clearTextControllers();
@@ -224,8 +213,7 @@ class _SignUpViewState extends State<SignUpView> {
           title: const Text('Erro de registro'),
           content: Container(
               constraints: const BoxConstraints(maxHeight: 20, maxWidth: 200),
-              child:
-                  const Text('Já existe alguém registrado com esse e-mail.')),
+              child: const Text('Já existe alguém registrado com esse e-mail.')),
           actions: <Widget>[
             TextButton(
               onPressed: () {

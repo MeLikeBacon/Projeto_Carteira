@@ -14,15 +14,10 @@ class PlotsView extends StatefulWidget {
 }
 
 class _PlotsViewState extends State<PlotsView> {
-  late MovsStore _movsStore;
-
-  late double movsMaxValue;
-
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
-    _movsStore = Provider.of<MovsStore>(context);
   }
 
   @override
@@ -34,8 +29,7 @@ class _PlotsViewState extends State<PlotsView> {
           title: 'Gráficos',
           actions: [
             IconButton(
-                onPressed: (() =>
-                    Navigator.pushReplacementNamed(context, '/search')),
+                onPressed: (() => Navigator.pushReplacementNamed(context, '/search')),
                 icon: const Icon(
                   Icons.receipt_long,
                   size: 40,
@@ -48,9 +42,7 @@ class _PlotsViewState extends State<PlotsView> {
               heightFactor: 2,
               child: Column(
                 children: [
-                  ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 800),
-                      child: LineChartWidget()),
+                  ConstrainedBox(constraints: const BoxConstraints(maxWidth: 800), child: LineChartWidget()),
                 ],
               )),
         ),

@@ -177,7 +177,9 @@ class _AccountViewState extends State<AccountView> {
                                 nome: _controllerNome.text,
                                 email: _controllerEmail.text,
                                 senha: _controllerSenha.text,
-                                minimo: _controllerMinimo);
+                                minimo: _controllerMinimo,
+                                saldo: _pessoasStore.currentUser.saldo,
+                                tipo: _pessoasStore.currentUser.tipo);
                             changeFun(tempPessoa);
                           },
                           child: Row(

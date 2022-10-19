@@ -9,7 +9,7 @@ class PessoaController {
   Future<Database?> get db => DatabaseHelper.getInstance().db;
   final PessoaDao _pessoaDao = PessoaDao();
 
-  Future<bool> insertPessoa(BuildContext context, PessoaModel pessoa) async {
+  Future<bool> insertPessoa(PessoaModel pessoa) async {
     List<PessoaModel> check = await _pessoaDao
         .query("SELECT * FROM pessoas WHERE email = ?;", [pessoa.email]);
 
@@ -17,7 +17,7 @@ class PessoaController {
       await _pessoaDao.save(pessoa);
       return false;
     } else {
-      print('$check already exists.');
+      print('${check.first} already exists.');
       return true;
     }
   }
@@ -47,7 +47,9 @@ class PessoaController {
       ..nome = tempPessoa.nome
       ..email = tempPessoa.email
       ..senha = tempPessoa.senha
-      ..minimo = tempPessoa.minimo;
+      ..minimo = tempPessoa.minimo
+      ..saldo = tempPessoa.saldo
+      ..tipo = tempPessoa.tipo;
     //Database
     _pessoaDao.updateUser(pessoa);
   }

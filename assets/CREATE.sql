@@ -4,7 +4,8 @@ CREATE TABLE IF NOT EXISTS pessoas(
     email               TEXT,
     senha               TEXT,
     minimo              REAL,
-    saldo               REAL
+    saldo               REAL,
+    tipo                TEXT
 );
 
 CREATE TABLE IF NOT EXISTS entrada(
@@ -31,4 +32,4 @@ CREATE TABLE IF NOT EXISTS saida(
     FOREIGN KEY(responsavel)    REFERENCES pessoas(codigo)
 );
 
-INSERT INTO pessoas(codigo,nome,email,senha,minimo,saldo) SELECT 0, 'admin', 'adm', '27', 0, 0 WHERE NOT EXISTS(SELECT 1 FROM pessoas WHERE codigo = 0);
+INSERT INTO pessoas(codigo,nome,email,senha,minimo,saldo,tipo) SELECT 0, 'admin', 'adm', '27', 0, 0, 'adm' WHERE NOT EXISTS(SELECT 1 FROM pessoas WHERE codigo = 0);

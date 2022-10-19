@@ -25,8 +25,7 @@ class _HomeFABState extends State<HomeFAB> {
     return FloatingActionButton(
         heroTag: 'Home',
         onPressed: () {
-          Navigator.pushReplacementNamed(context,
-              _pessoasStore.currentUser.codigo == 0 ? '/adm' : '/home');
+          Navigator.pushReplacementNamed(context, _pessoasStore.currentUser.tipo == 'adm' ? '/adm' : '/home');
         },
         child: Icon(
           Icons.home,

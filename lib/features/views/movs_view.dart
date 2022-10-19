@@ -39,7 +39,7 @@ class _MovsViewState extends State<MovsView> {
   void didChangeDependencies() async {
     super.didChangeDependencies();
     _pessoasStore = Provider.of<PessoasStore>(context);
-    _pessoasStore.pessoas.isEmpty ? await _pessoasStore.loadPessoas() : null;
+    await _pessoasStore.loadPessoas();
 
     if (contaMovimento.codigo == null && _pessoasStore.pessoaLoaded) {
       setPersonAffected(_pessoasStore.currentUser.codigo!);
@@ -47,8 +47,7 @@ class _MovsViewState extends State<MovsView> {
   }
 
   setPersonAffected(int conta) {
-    contaMovimento =
-        _pessoasStore.pessoas.singleWhere((element) => conta == element.codigo);
+    contaMovimento = _pessoasStore.pessoas.singleWhere((element) => conta == element.codigo);
     print('Current: ${_pessoasStore.currentUser.codigo!}');
     print('Responsible: $contaMovimento');
   }
@@ -68,37 +67,44 @@ class _MovsViewState extends State<MovsView> {
               child: Column(
             children: [
               Observer(builder: ((context) {
-                return _pessoasStore.pessoaLoaded &&
-                        _pessoasStore.currentUser.codigo == 0
-                    ? Container(
-                        constraints: const BoxConstraints(maxWidth: 700),
-                        width: screenSize.width * 0.9,
-                        child: DropdownButton(
-                          isExpanded: true,
-                          icon: const Icon(Icons.keyboard_arrow_down),
-                          value: dropUsers,
-                          hint: Text(
-                            'Usuário',
-                            style: TextStyle(fontSize: textSize),
+                return _pessoasStore.pessoaLoaded && _pessoasStore.currentUser.tipo == 'adm'
+                    ? Column(
+                        children: [
+                          dropUsers == null
+                              ? Text(
+                                  'Um usuário precisa ser definido.',
+                                  style: TextStyle(fontSize: textSize - 2, color: Colors.red),
+                                )
+                              : const SizedBox(),
+                          Container(
+                            constraints: const BoxConstraints(maxWidth: 700),
+                            width: screenSize.width * 0.9,
+                            child: DropdownButton(
+                              isExpanded: true,
+                              icon: const Icon(Icons.keyboard_arrow_down),
+                              value: dropUsers,
+                              hint: Text(
+                                'Usuário',
+                                style: TextStyle(fontSize: textSize),
+                              ),
+                              items: _pessoasStore.getLowerUsers().map((PessoaModel pessoa) {
+                                return DropdownMenuItem<String>(
+                                    value: pessoa.email,
+                                    child: Text(
+                                      pessoa.email!,
+                                      style: TextStyle(fontSize: textSize),
+                                    ));
+                              }).toList(),
+                              onChanged: (String? value) {
+                                setState(() {
+                                  dropUsers = value ?? '';
+                                  var resp = _pessoasStore.pessoas.firstWhere((pessoa) => pessoa.email == value);
+                                  setPersonAffected(resp.codigo!);
+                                });
+                              },
+                            ),
                           ),
-                          items:
-                              _pessoasStore.pessoas.map((PessoaModel pessoa) {
-                            return DropdownMenuItem<String>(
-                                value: pessoa.email,
-                                child: Text(
-                                  pessoa.email!,
-                                  style: TextStyle(fontSize: textSize),
-                                ));
-                          }).toList(),
-                          onChanged: (String? value) {
-                            setState(() {
-                              dropUsers = value ?? '';
-                              var resp = _pessoasStore.pessoas.firstWhere(
-                                  (pessoa) => pessoa.email == value);
-                              setPersonAffected(resp.codigo!);
-                            });
-                          },
-                        ),
+                        ],
                       )
                     : const SizedBox();
               })),
@@ -109,10 +115,7 @@ class _MovsViewState extends State<MovsView> {
                   controller: _valueController,
                   style: TextStyle(fontSize: textSize),
                   keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    CentavosInputFormatter()
-                  ],
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly, CentavosInputFormatter()],
                   decoration: InputDecoration(
                     errorText: errorTextValue,
                     labelText: 'Valor (R\$)',
@@ -134,10 +137,7 @@ class _MovsViewState extends State<MovsView> {
                   controller: _dateController,
                   style: TextStyle(fontSize: textSize),
                   keyboardType: TextInputType.datetime,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    DataInputFormatter()
-                  ],
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly, DataInputFormatter()],
                   decoration: InputDecoration(
                     errorText: errorTextDate,
                     labelText: 'Data (DD/MM/AAAA)',
@@ -161,9 +161,10 @@ class _MovsViewState extends State<MovsView> {
                       alignment: Alignment.topLeft,
                       child: Text(
                         'Descrição da movimentação',
-                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                            color: Theme.of(context).hintColor,
-                            fontSize: textSize),
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelLarge!
+                            .copyWith(color: Theme.of(context).hintColor, fontSize: textSize),
                       ),
                     ),
                     TextFormField(
@@ -195,16 +196,13 @@ class _MovsViewState extends State<MovsView> {
                           EntradaModel tempEntrada = EntradaModel(
                               pessoa: contaMovimento.codigo,
                               responsavel: _pessoasStore.currentUser.codigo,
-                              data_entrada:
-                                  UtilData.obterDateTime(_dateController.text),
+                              data_entrada: UtilData.obterDateTime(_dateController.text),
                               descricao: _descController.text,
-                              valor: UtilBrasilFields.converterMoedaParaDouble(
-                                  _valueController.text));
+                              valor: UtilBrasilFields.converterMoedaParaDouble(_valueController.text));
 
                           setState(() {
                             if (validDate()) {
-                              _entradaController.insertEntrada(
-                                  tempEntrada, contaMovimento);
+                              _entradaController.insertEntrada(tempEntrada, contaMovimento);
                               errorTextDate = null;
                             } else {
                               errorTextDate = 'Data inválida';
@@ -212,8 +210,7 @@ class _MovsViewState extends State<MovsView> {
                           });
                         }
                       },
-                      style: ButtonStyle(
-                          elevation: MaterialStateProperty.all(7.5)),
+                      style: ButtonStyle(elevation: MaterialStateProperty.all(7.5)),
                       child: Icon(
                         Icons.add,
                         size: iconSize + 20,
@@ -227,33 +224,27 @@ class _MovsViewState extends State<MovsView> {
                           SaidaModel tempSaida = SaidaModel(
                               pessoa: contaMovimento.codigo,
                               responsavel: _pessoasStore.currentUser.codigo,
-                              data_saida:
-                                  UtilData.obterDateTime(_dateController.text),
+                              data_saida: UtilData.obterDateTime(_dateController.text),
                               descricao: _descController.text,
-                              valor: UtilBrasilFields.converterMoedaParaDouble(
-                                  _valueController.text));
+                              valor: UtilBrasilFields.converterMoedaParaDouble(_valueController.text));
 
                           setState(() {
                             if (validDate()) {
                               errorTextDate = null;
                               if (contaMovimento.saldo! -
-                                      UtilBrasilFields.converterMoedaParaDouble(
-                                          _valueController.text) <
+                                      UtilBrasilFields.converterMoedaParaDouble(_valueController.text) <
                                   contaMovimento.minimo!) {
                                 showDialog(
                                     context: context,
-                                    builder: (BuildContext context) =>
-                                        AlertDialog(
-                                          title:
-                                              const Text('Aviso de consumo!'),
+                                    builder: (BuildContext context) => AlertDialog(
+                                          title: const Text('Aviso de consumo!'),
                                           content: Text(
                                               'Fazer essa movimentação deixará seu saldo abaixo do seu mínimo definido de ${UtilBrasilFields.obterReal(_pessoasStore.currentUser.minimo!.toDouble())}, deseja continuar?'),
                                           actions: <Widget>[
                                             TextButton(
                                               onPressed: () {
                                                 Navigator.pop(context, 'SIM');
-                                                _saidaController.insertSaida(
-                                                    tempSaida, contaMovimento);
+                                                _saidaController.insertSaida(tempSaida, contaMovimento);
                                               },
                                               child: const Text('SIM'),
                                             ),
@@ -266,8 +257,7 @@ class _MovsViewState extends State<MovsView> {
                                           ],
                                         ));
                               } else {
-                                _saidaController.insertSaida(
-                                    tempSaida, contaMovimento);
+                                _saidaController.insertSaida(tempSaida, contaMovimento);
                               }
                             } else {
                               errorTextDate = 'Data inválida';
@@ -275,8 +265,7 @@ class _MovsViewState extends State<MovsView> {
                           });
                         }
                       },
-                      style: ButtonStyle(
-                          elevation: MaterialStateProperty.all(7.5)),
+                      style: ButtonStyle(elevation: MaterialStateProperty.all(7.5)),
                       child: Icon(
                         Icons.remove,
                         size: iconSize + 20,
@@ -293,7 +282,7 @@ class _MovsViewState extends State<MovsView> {
   }
 
   bool filledForms() {
-    if (_dateController.text == '' || _valueController.text == '') {
+    if (_dateController.text == '' || _valueController.text == '' || dropUsers == null) {
       setState(() {
         if (_valueController.text == '') {
           errorTextValue = 'Insira um valor';
@@ -311,10 +300,8 @@ class _MovsViewState extends State<MovsView> {
   }
 
   validDate() {
-    if ((UtilData.obterDia(_dateController.text)! < 1 ||
-            UtilData.obterDia(_dateController.text)! > 31) ||
-        (UtilData.obterMes(_dateController.text)! < 1 ||
-            UtilData.obterMes(_dateController.text)! > 12)) {
+    if ((UtilData.obterDia(_dateController.text)! < 1 || UtilData.obterDia(_dateController.text)! > 31) ||
+        (UtilData.obterMes(_dateController.text)! < 1 || UtilData.obterMes(_dateController.text)! > 12)) {
       return false;
     } else {
       return true;
