@@ -141,29 +141,28 @@ class _LoginViewState extends State<LoginView> {
                             Navigator.pushReplacementNamed(context, '/forgor');
                           }))),
               ),
-              ConstrainedBox(
+              Container(
                 constraints: const BoxConstraints(maxWidth: 650),
-                child: Container(
-                  width: screenSize.width * 0.70,
-                  margin: EdgeInsets.only(top: 15 * screenSize.height * 0.0025),
-                  child: ElevatedButton(
-                      onPressed: () async {
-                        List<PessoaModel> userlogin =
-                            await _pessoaController.logInPessoa(_controllerEmail.text, _controllerSenha.text);
-                        if (userlogin.isNotEmpty) {
-                          _pessoasStore.changeUser(userlogin.first);
-                          if (userlogin.first.tipo == 'adm') {
-                            Navigator.pushReplacementNamed(context, '/adm');
-                          } else {
-                            Navigator.pushReplacementNamed(context, '/home');
-                          }
-                        } else {}
-                      },
-                      child: Text(
-                        'Entrar',
-                        style: TextStyle(fontSize: textSize),
-                      )),
-                ),
+                width: screenSize.width * 0.70,
+                margin: EdgeInsets.only(top: 15 * screenSize.height * 0.0025),
+                child: ElevatedButton(
+                    onPressed: () async {
+                      List<PessoaModel> userlogin =
+                          await _pessoaController.logInPessoa(_controllerEmail.text, _controllerSenha.text);
+                      if (userlogin.isNotEmpty) {
+                        print(userlogin.first);
+                        _pessoasStore.changeUser(userlogin.first);
+                        if (userlogin.first.tipo == 'adm') {
+                          Navigator.pushReplacementNamed(context, '/adm');
+                        } else {
+                          Navigator.pushReplacementNamed(context, '/home');
+                        }
+                      } else {}
+                    },
+                    child: Text(
+                      'Entrar',
+                      style: TextStyle(fontSize: textSize),
+                    )),
               ),
               TextButton(
                   onPressed: () => Navigator.pushNamed(context, '/signup'),

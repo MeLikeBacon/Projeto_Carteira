@@ -22,6 +22,9 @@ abstract class _PessoasStore with Store {
   PessoaModel currentUser = PessoaModel();
 
   @observable
+  PessoaModel editedUser = PessoaModel();
+
+  @observable
   List<PessoaModel> pessoas = [];
 
   @observable
@@ -41,6 +44,11 @@ abstract class _PessoasStore with Store {
   @action
   void changeUser(PessoaModel newUser) {
     currentUser = newUser;
+  }
+
+  @action
+  void setEditedUser(PessoaModel newUser) {
+    editedUser = newUser;
   }
 
   @action
@@ -68,6 +76,9 @@ abstract class _PessoasStore with Store {
   }
 
   @observable
+  int userCodigo = 0;
+
+  @observable
   TextEditingController nomeControl = TextEditingController();
 
   @observable
@@ -88,6 +99,19 @@ abstract class _PessoasStore with Store {
   @action
   setUserType(value) {
     userType = value;
+  }
+
+  @action
+  setAllControllers(PessoaModel pessoa) {
+    nomeControl.text = pessoa.nome!;
+    emailControl.text = pessoa.email!;
+    senhaControl.text = pessoa.senha!;
+    minimoControl.text = pessoa.minimo!.toString();
+    saldoControl.text = pessoa.saldo!.toString();
+    userType = pessoa.tipo!;
+
+    minimoControl.text = UtilBrasilFields.obterReal(editedUser.minimo!, moeda: false);
+    saldoControl.text = UtilBrasilFields.obterReal(editedUser.saldo!, moeda: false);
   }
 
   @action

@@ -28,39 +28,21 @@ class _HomeViewState extends State<HomeView> {
     Icons.logout,
   ];
 
-  List<String> iconLabels = [
-    'Editar conta',
-    'Movimentar',
-    'Consultar',
-    'Exportar PDF',
-    'Sair'
-  ];
+  List<String> iconLabels = ['Editar conta', 'Movimentar', 'Consultar', 'Exportar PDF', 'Sair'];
 
   List<String> iconRefs = ['/account', '/movs', '/search', '/pdf', '/login'];
 
   @override
   Widget build(BuildContext context) {
-    var screenSize = MediaQuery
-        .of(context)
-        .size;
-    var textSize = 14 + MediaQuery
-        .of(context)
-        .size
-        .width * 0.0075;
-    var iconSize = 40 + MediaQuery
-        .of(context)
-        .size
-        .width * 0.0075;
-    bool screenVertical =
-        MediaQuery
-            .of(context)
-            .orientation == Orientation.portrait;
+    var screenSize = MediaQuery.of(context).size;
+    var textSize = 14 + MediaQuery.of(context).size.width * 0.0075;
+    var iconSize = 40 + MediaQuery.of(context).size.width * 0.0075;
+    bool screenVertical = MediaQuery.of(context).orientation == Orientation.portrait;
 
     void deslogar() {
       showDialog(
           context: context,
-          builder: (BuildContext context) =>
-              AlertDialog(
+          builder: (BuildContext context) => AlertDialog(
                 title: const Text('Saindo'),
                 content: const Text('Deseja realmente sair de sua conta?'),
                 actions: <Widget>[
@@ -69,9 +51,7 @@ class _HomeViewState extends State<HomeView> {
                       Navigator.pop(context, 'SIM');
                       _pessoasStore.logout();
                       Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          iconRefs[screenVertical ? 5 - 1 : 5],
-                          ModalRoute.withName('/'));
+                          context, iconRefs[screenVertical ? 5 - 1 : 5], ModalRoute.withName('/'));
                     },
                     child: const Text('SIM'),
                   ),
@@ -93,68 +73,58 @@ class _HomeViewState extends State<HomeView> {
           children: List.generate(screenVertical ? 6 : 5, (index) {
             return InkWell(
               onTap: (() {
-                if (screenVertical && index == 0) {} else {
-                  if (iconLabels[screenVertical ? index - 1 : index] ==
-                      'Sair') {
+                _pessoasStore.setEditedUser(_pessoasStore.currentUser);
+                _pessoasStore.setAllControllers(_pessoasStore.editedUser);
+                if (screenVertical && index == 0) {
+                } else {
+                  if (iconLabels[screenVertical ? index - 1 : index] == 'Sair') {
                     deslogar();
                   } else {
-                    Navigator.pushNamed(
-                        context, iconRefs[screenVertical ? index - 1 : index]);
+                    Navigator.pushNamed(context, iconRefs[screenVertical ? index - 1 : index]);
                   }
                 }
               }),
               child: Ink(
-                color: index == 0 || index == 3 || index == 4
-                    ? const Color.fromARGB(139, 206, 235, 247)
-                    : null,
+                color: index == 0 || index == 3 || index == 4 ? const Color.fromARGB(139, 206, 235, 247) : null,
                 child: index == 0 && screenVertical
                     ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.account_circle,
-                      size: iconSize,
-                    ),
-                    const SizedBox(
-                      height: 3,
-                    ),
-                    Text(
-                      _pessoasStore.currentUser.nome!,
-                      style: Theme
-                          .of(context)
-                          .textTheme
-                          .titleMedium!
-                          .copyWith(fontSize: textSize),
-                    ),
-                    Text(
-                      'R\$${_pessoasStore.currentUser.saldo!.toStringAsFixed(
-                          2)}',
-                      style: TextStyle(
-                          fontSize: textSize,
-                          color: Theme
-                              .of(context)
-                              .hintColor),
-                    ),
-                  ],
-                )
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.account_circle,
+                            size: iconSize,
+                          ),
+                          const SizedBox(
+                            height: 3,
+                          ),
+                          Text(
+                            _pessoasStore.currentUser.nome!,
+                            style: Theme.of(context).textTheme.titleMedium!.copyWith(fontSize: textSize),
+                          ),
+                          Text(
+                            'R\$${_pessoasStore.currentUser.saldo!.toStringAsFixed(2)}',
+                            style: TextStyle(fontSize: textSize, color: Theme.of(context).hintColor),
+                          ),
+                        ],
+                      )
                     : Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      iconButtons[screenVertical ? index - 1 : index],
-                      size: iconSize,
-                    ),
-                    const SizedBox(
-                      height: 3,
-                    ),
-                    Text(
-                      iconLabels[screenVertical ? index - 1 : index],
-                      style: TextStyle(fontSize: textSize),
-                    )
-                  ],
-                ),
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            iconButtons[screenVertical ? index - 1 : index],
+                            size: iconSize,
+                          ),
+                          const SizedBox(
+                            height: 3,
+                          ),
+                          Text(
+                            iconLabels[screenVertical ? index - 1 : index],
+                            style: TextStyle(fontSize: textSize),
+                          )
+                        ],
+                      ),
               ),
             );
           }),
@@ -163,56 +133,50 @@ class _HomeViewState extends State<HomeView> {
       screenVertical
           ? Container()
           : InkWell(
-        onTap: () {},
-        child: Container(
-          width: (screenSize.width) - (screenSize.height * 1.5 - 120),
-          color: const Color.fromARGB(177, 206, 235, 247),
-          child: Ink(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.account_circle,
-                  size: iconSize,
+              onTap: () {},
+              child: Container(
+                width: (screenSize.width) - (screenSize.height * 1.5 - 120),
+                color: const Color.fromARGB(177, 206, 235, 247),
+                child: Ink(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.account_circle,
+                        size: iconSize,
+                      ),
+                      const SizedBox(
+                        height: 3,
+                      ),
+                      Text(
+                        _pessoasStore.currentUser.nome!,
+                        style: Theme.of(context).textTheme.titleMedium!.copyWith(fontSize: textSize),
+                      ),
+                      Text(
+                        'R\$${_pessoasStore.currentUser.saldo!.toStringAsFixed(2)} / R\$${_pessoasStore.currentUser.minimo!.toStringAsFixed(2)}',
+                        style: TextStyle(fontSize: textSize),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(
-                  height: 3,
-                ),
-                Text(
-                  _pessoasStore.currentUser.nome!,
-                  style: Theme
-                      .of(context)
-                      .textTheme
-                      .titleMedium!
-                      .copyWith(fontSize: textSize),
-                ),
-                Text(
-                  'R\$${_pessoasStore.currentUser.saldo!.toStringAsFixed(
-                      2)} / R\$${_pessoasStore.currentUser.minimo!
-                      .toStringAsFixed(2)}',
-                  style: TextStyle(fontSize: textSize),
-                ),
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
     ];
 
     return Scaffold(
       appBar: MyAppBar(),
       body: iconRefs.isNotEmpty
           ? screenVertical
-          ? Column(
-        children: homePage,
-      )
-          : Row(
-        children: homePage,
-      )
+              ? Column(
+                  children: homePage,
+                )
+              : Row(
+                  children: homePage,
+                )
           : const Center(
-        child: CircularProgressIndicator(),
-      ),
+              child: CircularProgressIndicator(),
+            ),
     );
   }
 }

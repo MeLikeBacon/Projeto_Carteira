@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:projeto_carteira/features/controllers/entrada_controller.dart';
 import 'package:projeto_carteira/features/controllers/saida_controller.dart';
+import 'package:projeto_carteira/features/models/pessoa_model.dart';
 import 'package:projeto_carteira/features/stores/pessoas_store.dart';
 import 'package:provider/provider.dart';
 
@@ -95,7 +96,7 @@ class _UserListViewState extends State<UserListView> {
                                       print(_selected);
                                     },
                                     onLongPress: () {
-                                      print(_pessoasStore.getLowerUsers()[index]);
+                                      showUserInfo(_pessoasStore.getLowerUsers()[index], textSize - 2);
                                     },
                                     leading: Text(
                                       _pessoasStore.getLowerUsers()[index].codigo.toString(),
@@ -115,21 +116,6 @@ class _UserListViewState extends State<UserListView> {
                                         fontSize: textSize,
                                       ),
                                     ));
-
-                                /*if (_pessoasStore.pessoas[index].codigo == 0) {
-                                  return ListTile(
-                                    leading: Text(
-                                      'ID',
-                                      style: TextStyle(fontSize: textSize, fontWeight: FontWeight.bold),
-                                    ),
-                                    title: Text(
-                                      'NOME/E-MAIL',
-                                      style: TextStyle(fontSize: textSize + 1, fontWeight: FontWeight.bold),
-                                    ),
-                                    trailing:
-                                        Text('SALDO', style: TextStyle(fontSize: textSize, fontWeight: FontWeight.bold)),
-                                  );
-                                }*/
                               },
                               separatorBuilder: (BuildContext context, int index) => const Divider(),
                               //
@@ -149,5 +135,58 @@ class _UserListViewState extends State<UserListView> {
         floatingActionButton: HomeFAB(
           iconSize: iconSize,
         ));
+  }
+
+  showUserInfo(PessoaModel pessoa, double textSize) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text('Informações do usuário', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize + 4)),
+        content: Wrap(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('ID:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
+                      Text('Nome:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
+                      Text('E-Mail:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
+                      Text('Senha:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
+                      Text('Mínimo:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
+                      Text('Saldo atual:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
+                      Text('Tipo:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('${pessoa.codigo}', style: TextStyle(fontSize: textSize)),
+                      Text('${pessoa.nome}', style: TextStyle(fontSize: textSize)),
+                      Text('${pessoa.email}', style: TextStyle(fontSize: textSize)),
+                      Text('${pessoa.senha}', style: TextStyle(fontSize: textSize)),
+                      Text(UtilBrasilFields.obterReal(pessoa.minimo!), style: TextStyle(fontSize: textSize)),
+                      Text(UtilBrasilFields.obterReal(pessoa.saldo!), style: TextStyle(fontSize: textSize)),
+                      Text('${pessoa.tipo}', style: TextStyle(fontSize: textSize)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context, 'OK');
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 }
