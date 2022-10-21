@@ -14,15 +14,13 @@ abstract class BaseDao<T extends Entity> {
 
   Future<int> save(T entity) async {
     var dbClient = await db;
-    var id = await dbClient!.insert(tableName, entity.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace);
+    var id = await dbClient!.insert(tableName, entity.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
     return id;
   }
 
-  Future<List<T>> update(int numId, String column, String newer) async {
+  Future<List<T>> update(int numId, String column, String newer, String conditional) async {
     var dbClient = await db;
-    final list = await dbClient!.rawQuery(
-        'UPDATE $tableName SET $column = ? WHERE id = ?;', [newer, numId]);
+    final list = await dbClient!.rawQuery('UPDATE $tableName SET $column = ? WHERE $conditional = ?;', [newer, numId]);
     return list.map<T>((json) => fromMap(json)).toList();
   }
 
@@ -58,8 +56,7 @@ abstract class BaseDao<T extends Entity> {
 
   Future<int> delete(int id, String field) async {
     var dbClient = await db;
-    return await dbClient!
-        .rawDelete('delete from $tableName where $field = ?', [id]);
+    return await dbClient!.rawDelete('delete from $tableName where $field = ?', [id]);
   }
 
   Future<int> deleteAll() async {

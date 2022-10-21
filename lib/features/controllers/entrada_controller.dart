@@ -28,7 +28,7 @@ class EntradaController {
   }
 
   updateEntradaField(int id, String column, String newer) {
-    _entradaDao.update(id, column, newer);
+    _entradaDao.update(id, column, newer, 'codigo');
   }
 
   // Updates both instance and database
@@ -37,7 +37,8 @@ class EntradaController {
     entrada
       ..descricao = tempEntrada.descricao
       ..data = tempEntrada.data
-      ..valor = tempEntrada.valor;
+      ..valor = tempEntrada.valor
+      ..mov_type = tempEntrada.mov_type;
 
     //Database
     _entradaDao.updateEntrada(tempEntrada);

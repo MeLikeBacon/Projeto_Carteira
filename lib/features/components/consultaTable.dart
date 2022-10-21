@@ -31,6 +31,8 @@ class _ConsultaTableState extends State<ConsultaTable> {
   final EntradaController _entradaController = EntradaController();
   final SaidaController _saidaController = SaidaController();
 
+  TextEditingController _descControl = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
@@ -166,6 +168,7 @@ class _ConsultaTableState extends State<ConsultaTable> {
   showMovInfo(Movimento mov, double textSize, double iconSize) async {
     var user = await _pessoaController.findPessoaByID(mov.pessoa!);
     var resp = await _pessoaController.findPessoaByID(mov.responsavel!);
+
     showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
@@ -213,7 +216,44 @@ class _ConsultaTableState extends State<ConsultaTable> {
           IconButton(
             icon: Icon(Icons.edit, size: iconSize, color: Colors.blue.withOpacity(.75)),
             onPressed: () {
-              print(widget.tableItems);
+              setState(() {
+                _descControl.text = mov.descricao!;
+              });
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                        title: const Text('Alterar descrição'),
+                        content: TextFormField(
+                          controller: _descControl,
+                          style: TextStyle(fontSize: textSize),
+                          minLines: 4,
+                          maxLines: 4,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                        actions: [
+                          IconButton(
+                            icon: Icon(Icons.check, size: iconSize, color: Colors.black.withOpacity(.75)),
+                            onPressed: () {
+                              mov.descricao = _descControl.text;
+                              if (mov.mov_type!) {
+                                _entradaController.updateEntradaField(mov.codigo!, 'descricao', _descControl.text);
+                              } else {
+                                _saidaController.updateSaidaField(mov.codigo!, 'descricao', _descControl.text);
+                              }
+
+                              Navigator.pop(context, 'OK');
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.close, size: iconSize, color: Colors.black.withOpacity(.75)),
+                            onPressed: () {
+                              Navigator.pop(context, 'OK');
+                            },
+                          )
+                        ],
+                      ));
             },
           ),
           IconButton(

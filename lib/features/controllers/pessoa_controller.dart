@@ -38,7 +38,7 @@ class PessoaController {
   }
 
   updatePessoaField(int id, String column, String newer) {
-    _pessoaDao.update(id, column, newer);
+    _pessoaDao.update(id, column, newer, 'codigo');
   }
 
   // Updates both instance and database

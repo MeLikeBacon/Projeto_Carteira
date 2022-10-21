@@ -29,11 +29,8 @@ class EntradaDao extends BaseDao<EntradaModel> {
 
   updateEntrada(EntradaModel updatedEntrada) async {
     try {
-      await query('UPDATE entrada SET descricao = ?, data_entrada = ?, valor = ? WHERE codigo = ?;', [
-        updatedEntrada.descricao,
-        updatedEntrada.data,
-        updatedEntrada.valor,
-      ]);
+      await query('UPDATE entrada SET descricao = ?, data_entrada = ?, valor = ? WHERE codigo = ?;',
+          [updatedEntrada.descricao, updatedEntrada.data, updatedEntrada.valor, updatedEntrada.codigo]);
       print('updated entrada, id: ${updatedEntrada.codigo}');
     } catch (e) {
       print(e);

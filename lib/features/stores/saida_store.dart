@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:projeto_carteira/features/DAOs/saida_dao.dart';
 
@@ -29,4 +30,5 @@ abstract class _SaidaStore with Store {
   emptySaidas() {
     saidas = [];
   }
+
 }

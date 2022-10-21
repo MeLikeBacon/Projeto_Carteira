@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:mobx/mobx.dart';
 import 'package:projeto_carteira/features/DAOs/entrada_dao.dart';
 
@@ -29,4 +30,5 @@ abstract class _EntradaStore with Store {
   emptyEntradas() {
     entradas = [];
   }
+
 }

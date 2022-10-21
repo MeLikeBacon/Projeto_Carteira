@@ -27,7 +27,7 @@ class SaidaController {
   }
 
   updateSaidaField(int id, String column, String newer) {
-    _saidaDao.update(id, column, newer);
+    _saidaDao.update(id, column, newer, 'codigo');
   }
 
   // Updates both instance and database
@@ -36,7 +36,8 @@ class SaidaController {
     saida
       ..descricao = tempSaida.descricao
       ..data = tempSaida.data
-      ..valor = tempSaida.valor;
+      ..valor = tempSaida.valor
+      ..mov_type = tempSaida.mov_type;
 
     //Database
     _saidaDao.updateSaida(tempSaida);

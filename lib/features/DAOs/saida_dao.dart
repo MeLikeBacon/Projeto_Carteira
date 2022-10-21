@@ -26,14 +26,11 @@ class SaidaDao extends BaseDao<SaidaModel> {
       print(e);
     }
   }
-
+  
   updateSaida(SaidaModel updatedSaida) async {
     try {
-      await query('UPDATE saida SET descricao = ?, data_saida = ?, valor = ? WHERE codigo = ?;', [
-        updatedSaida.descricao,
-        updatedSaida.data,
-        updatedSaida.valor,
-      ]);
+      await query('UPDATE saida SET descricao = ?, data_saida = ?, valor = ? WHERE codigo = ?;',
+          [updatedSaida.descricao, updatedSaida.data, updatedSaida.valor, updatedSaida.codigo]);
       print('updated saida, id: ${updatedSaida.codigo}');
     } catch (e) {
       print(e);
