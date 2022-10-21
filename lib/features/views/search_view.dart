@@ -44,11 +44,11 @@ class _SearchViewState extends State<SearchView> {
     _entradaStore = Provider.of<EntradaStore>(context);
     _saidaStore = Provider.of<SaidaStore>(context);
     _movsStore = Provider.of<MovsStore>(context);
-    _entradaStore.entradas.isEmpty ? _entradaStore.loadEntradas() : null;
-    _saidaStore.saidas.isEmpty ? _saidaStore.loadSaidas() : null;
-    _movsStore.movs.isEmpty ? _movsStore.loadMovs() : null;
     dropUsers = _pessoasStore.getLowerUsers().first.email;
     selectedPersonId = _pessoasStore.getLowerUsers().first.codigo;
+    _entradaStore.entradas.isEmpty ? _entradaStore.loadEntradas(selectedPersonId!) : null;
+    _saidaStore.saidas.isEmpty ? _saidaStore.loadSaidas(selectedPersonId!) : null;
+    _movsStore.movs.isEmpty ? _movsStore.loadMovs(selectedPersonId!) : null;
   }
 
   final List<String> _range = ['', ''];
@@ -137,16 +137,17 @@ class _SearchViewState extends State<SearchView> {
                                         var resp =
                                             _pessoasStore.getLowerUsers().firstWhere((pessoa) => pessoa.email == value);
                                         selectedPersonId = resp.codigo;
-                                        setFilter();
                                       });
+                                      setFilter(selectedPersonId!);
                                     },
                                   ),
                                 )
                               : const SizedBox(),
-                          consultaTable(
+                          ConsultaTable(
                             view: consultaDrop!,
                             tableItems: defineView(),
                             sortColumnIndex: sortColumnIndex,
+                            canEdit: _pessoasStore.currentUser.tipo == 'adm',
                           ),
                           const SizedBox(
                             height: 100,
@@ -197,6 +198,7 @@ class _SearchViewState extends State<SearchView> {
                             break;
                         }
                         consultaDrop = value;
+                        setFilter(selectedPersonId!);
                       });
                     }),
                     items: consultaItems.map<DropdownMenuItem<String>>((String value) {
@@ -225,7 +227,7 @@ class _SearchViewState extends State<SearchView> {
                   SpeedDialChild(
                       child: const Icon(Icons.refresh),
                       onTap: () => setState(() {
-                            setFilter();
+                            setFilter(selectedPersonId!);
                           })),
                   SpeedDialChild(
                     child: const Icon(Icons.date_range),
@@ -236,7 +238,7 @@ class _SearchViewState extends State<SearchView> {
                                 title: const Text('Filtrar intervalo de tempo'),
                                 content: ConstrainedBox(
                                   constraints: const BoxConstraints(maxWidth: 700, maxHeight: 300),
-                                  child: Container(
+                                  child: SizedBox(
                                     width: screenSize.width * 0.75,
                                     child: SfDateRangePicker(
                                       onSelectionChanged: _onSelectionChanged,
@@ -291,27 +293,27 @@ class _SearchViewState extends State<SearchView> {
     );
   }
 
-  setFilter({String initialDate = '', String finalDate = '', bool clean = false}) async {
+  setFilter(int personID, {String initialDate = '', String finalDate = '', bool clean = false}) async {
     if (clean) {
       _movsStore.emptyMovs();
-      await _movsStore.loadMovs(initialDate: initialDate, finalDate: finalDate, personId: selectedPersonId);
+      await _movsStore.loadMovs(personID, initialDate: initialDate, finalDate: finalDate);
       _entradaStore.emptyEntradas();
-      await _entradaStore.loadEntradas(initialDate: initialDate, finalDate: finalDate, personId: selectedPersonId);
+      await _entradaStore.loadEntradas(personID, initialDate: initialDate, finalDate: finalDate);
       _saidaStore.emptySaidas();
-      await _saidaStore.loadSaidas(initialDate: initialDate, finalDate: finalDate, personId: selectedPersonId);
+      await _saidaStore.loadSaidas(personID, initialDate: initialDate, finalDate: finalDate);
     } else {
       switch (consultaDrop) {
         case 'Entradas e Saídas':
           _movsStore.emptyMovs();
-          await _movsStore.loadMovs(initialDate: initialDate, finalDate: finalDate, personId: selectedPersonId);
+          await _movsStore.loadMovs(personID, initialDate: initialDate, finalDate: finalDate);
           break;
         case 'Entradas':
           _entradaStore.emptyEntradas();
-          await _entradaStore.loadEntradas(initialDate: initialDate, finalDate: finalDate, personId: selectedPersonId);
+          await _entradaStore.loadEntradas(personID, initialDate: initialDate, finalDate: finalDate);
           break;
         case 'Saídas':
           _saidaStore.emptySaidas();
-          await _saidaStore.loadSaidas(initialDate: initialDate, finalDate: finalDate, personId: selectedPersonId);
+          await _saidaStore.loadSaidas(personID, initialDate: initialDate, finalDate: finalDate);
           break;
       }
     }
@@ -319,6 +321,6 @@ class _SearchViewState extends State<SearchView> {
   }
 
   defineDataRange() {
-    setFilter(initialDate: dataRangeStart, finalDate: dataRangeEnd);
+    setFilter(selectedPersonId!, initialDate: dataRangeStart, finalDate: dataRangeEnd);
   }
 }

@@ -20,10 +20,18 @@ class PessoaDao extends BaseDao<PessoaModel> {
     }
   }
 
+  getUserByID(int id) async {
+    try {
+      List<PessoaModel> pessoa = await query('SELECT * FROM $tableName WHERE codigo = $id');
+      return pessoa.first;
+    } catch (e) {
+      print(e);
+    }
+  }
+
   updateSaldo(int pessoaId, double newSaldo) async {
     try {
-      await query('UPDATE pessoas SET saldo = ? WHERE codigo = ?;',
-          [newSaldo, pessoaId]);
+      await query('UPDATE pessoas SET saldo = ? WHERE codigo = ?;', [newSaldo, pessoaId]);
     } catch (e) {
       print(e);
     }
@@ -32,16 +40,15 @@ class PessoaDao extends BaseDao<PessoaModel> {
   updateUser(PessoaModel updatedPessoa) async {
     try {
       await query(
-          'UPDATE pessoas SET nome = ?, email = ?, senha = ?, minimo = ?, saldo = ?, tipo = ? WHERE codigo = ?;',
-          [
-            updatedPessoa.nome,
-            updatedPessoa.email,
-            updatedPessoa.senha,
-            updatedPessoa.minimo,
-            updatedPessoa.saldo,
-            updatedPessoa.tipo,
-            updatedPessoa.codigo
-          ]);
+          'UPDATE pessoas SET nome = ?, email = ?, senha = ?, minimo = ?, saldo = ?, tipo = ? WHERE codigo = ?;', [
+        updatedPessoa.nome,
+        updatedPessoa.email,
+        updatedPessoa.senha,
+        updatedPessoa.minimo,
+        updatedPessoa.saldo,
+        updatedPessoa.tipo,
+        updatedPessoa.codigo
+      ]);
       print('updated user, id: ${updatedPessoa.codigo}');
     } catch (e) {
       print(e);

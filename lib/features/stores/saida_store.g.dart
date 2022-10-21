@@ -44,10 +44,10 @@ mixin _$SaidaStore on _SaidaStore, Store {
       AsyncAction('_SaidaStore.loadSaidas', context: context);
 
   @override
-  Future loadSaidas(
-      {String initialDate = '', String finalDate = '', int? personId}) {
-    return _$loadSaidasAsyncAction.run(() => super.loadSaidas(
-        initialDate: initialDate, finalDate: finalDate, personId: personId));
+  Future loadSaidas(int personId,
+      {String initialDate = '', String finalDate = ''}) {
+    return _$loadSaidasAsyncAction.run(() => super
+        .loadSaidas(personId, initialDate: initialDate, finalDate: finalDate));
   }
 
   late final _$_SaidaStoreActionController =

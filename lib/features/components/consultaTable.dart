@@ -1,8 +1,9 @@
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:projeto_carteira/features/controllers/entrada_controller.dart';
+import 'package:projeto_carteira/features/controllers/pessoa_controller.dart';
+import 'package:projeto_carteira/features/controllers/saida_controller.dart';
 import 'package:provider/provider.dart';
 
 import '../models/movimento_abs.dart';
@@ -10,23 +11,25 @@ import '../stores/entrada_store.dart';
 import '../stores/movs_store.dart';
 import '../stores/saida_store.dart';
 
-class consultaTable extends StatefulWidget {
-  consultaTable(
-      {super.key,
-      required this.view,
-      required this.tableItems,
-      required this.sortColumnIndex});
+class ConsultaTable extends StatefulWidget {
+  ConsultaTable(
+      {super.key, required this.view, required this.tableItems, required this.sortColumnIndex, required this.canEdit});
 
   String view;
   List<Movimento> tableItems;
   int sortColumnIndex;
+  bool canEdit;
 
   @override
-  State<consultaTable> createState() => _consultaTableState();
+  State<ConsultaTable> createState() => _ConsultaTableState();
 }
 
-class _consultaTableState extends State<consultaTable> {
+class _ConsultaTableState extends State<ConsultaTable> {
   var isAscending = true;
+
+  final PessoaController _pessoaController = PessoaController();
+  final EntradaController _entradaController = EntradaController();
+  final SaidaController _saidaController = SaidaController();
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +44,8 @@ class _consultaTableState extends State<consultaTable> {
                   widget.sortColumnIndex = columnIndex;
                   isAscending = ascending;
                   ascending
-                      ? widget.tableItems
-                          .sort(((a, b) => a.data!.compareTo(b.data!)))
-                      : widget.tableItems
-                          .sort(((b, a) => a.data!.compareTo(b.data!)));
+                      ? widget.tableItems.sort(((a, b) => a.data!.compareTo(b.data!)))
+                      : widget.tableItems.sort(((b, a) => a.data!.compareTo(b.data!)));
                 }),
             label: const Text(
               'Data',
@@ -55,10 +56,8 @@ class _consultaTableState extends State<consultaTable> {
                   widget.sortColumnIndex = columnIndex;
                   isAscending = ascending;
                   ascending
-                      ? widget.tableItems.sort(
-                          ((a, b) => a.descricao!.compareTo(b.descricao!)))
-                      : widget.tableItems.sort(
-                          ((b, a) => a.descricao!.compareTo(b.descricao!)));
+                      ? widget.tableItems.sort(((a, b) => a.descricao!.compareTo(b.descricao!)))
+                      : widget.tableItems.sort(((b, a) => a.descricao!.compareTo(b.descricao!)));
                 }),
             label: const Text(
               'Descrição',
@@ -69,10 +68,8 @@ class _consultaTableState extends State<consultaTable> {
                   widget.sortColumnIndex = columnIndex;
                   isAscending = ascending;
                   ascending
-                      ? widget.tableItems
-                          .sort(((a, b) => a.valor!.compareTo(b.valor!)))
-                      : widget.tableItems
-                          .sort(((b, a) => a.valor!.compareTo(b.valor!)));
+                      ? widget.tableItems.sort(((a, b) => a.valor!.compareTo(b.valor!)))
+                      : widget.tableItems.sort(((b, a) => a.valor!.compareTo(b.valor!)));
                 }),
             label: const Text(
               'Valor\n(R\$)',
@@ -85,12 +82,8 @@ class _consultaTableState extends State<consultaTable> {
                 widget.sortColumnIndex = columnIndex;
                 isAscending = ascending;
                 ascending
-                    ? widget.tableItems.sort(((b, a) => a.mov_type!
-                        .toString()
-                        .compareTo(b.mov_type!.toString())))
-                    : widget.tableItems.sort(((a, b) => a.mov_type!
-                        .toString()
-                        .compareTo(b.mov_type!.toString())));
+                    ? widget.tableItems.sort(((b, a) => a.mov_type!.toString().compareTo(b.mov_type!.toString())))
+                    : widget.tableItems.sort(((a, b) => a.mov_type!.toString().compareTo(b.mov_type!.toString())));
               }),
               label: ConstrainedBox(
                 constraints: BoxConstraints(maxWidth: iconSize),
@@ -101,6 +94,7 @@ class _consultaTableState extends State<consultaTable> {
               ),
             ))
           : null;
+      widget.canEdit ? columns.add(const DataColumn(label: Text(''))) : null;
       return columns;
     }
 
@@ -111,7 +105,7 @@ class _consultaTableState extends State<consultaTable> {
         )),
         DataCell(
             ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: screenSize.width * 0.2),
+              constraints: BoxConstraints(maxWidth: screenSize.width * 0.15),
               child: Text(
                 widget.tableItems[index].descricao!,
                 overflow: TextOverflow.ellipsis,
@@ -141,6 +135,19 @@ class _consultaTableState extends State<consultaTable> {
             )))
           : null;
 
+      widget.canEdit
+          ? cells.add(DataCell(IconButton(
+              icon: Icon(
+                Icons.settings,
+                size: iconSize,
+                color: Colors.black.withOpacity(.75),
+              ),
+              onPressed: () async {
+                await showMovInfo(widget.tableItems[index], textSize, iconSize);
+              },
+            )))
+          : null;
+
       return cells;
     }
 
@@ -148,13 +155,91 @@ class _consultaTableState extends State<consultaTable> {
       sortAscending: isAscending,
       sortColumnIndex: widget.sortColumnIndex,
       showBottomBorder: true,
-      columnSpacing: iconSize - 2,
+      columnSpacing: iconSize - 12,
       headingTextStyle: TextStyle(fontSize: textSize, color: Colors.black),
-      dataTextStyle:
-          TextStyle(fontSize: textSize, color: Colors.black.withOpacity(0.75)),
+      dataTextStyle: TextStyle(fontSize: textSize, color: Colors.black.withOpacity(0.75)),
       columns: tableColumns(),
-      rows: List<DataRow>.generate(widget.tableItems.length,
-          (index) => DataRow(cells: tableCells(index))),
+      rows: List<DataRow>.generate(widget.tableItems.length, (index) => DataRow(cells: tableCells(index))),
+    );
+  }
+
+  showMovInfo(Movimento mov, double textSize, double iconSize) async {
+    var user = await _pessoaController.findPessoaByID(mov.pessoa!);
+    var resp = await _pessoaController.findPessoaByID(mov.responsavel!);
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text('Informações do movimento', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize + 4)),
+        content: Wrap(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text('ID:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
+                      Text('Usuário:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
+                      Text('Responsável:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
+                      Text('Data:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
+                      Text('Valor:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
+                      Text('Tipo:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
+                      Text('Descrição:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text('${mov.codigo}', style: TextStyle(fontSize: textSize)),
+                      Text(user.email!, style: TextStyle(fontSize: textSize)),
+                      Text(resp.email!, style: TextStyle(fontSize: textSize)),
+                      Text(UtilData.obterDataDDMMAAAA(mov.data!), style: TextStyle(fontSize: textSize)),
+                      Text(UtilBrasilFields.obterReal(mov.valor!), style: TextStyle(fontSize: textSize)),
+                      Text(mov.mov_type! ? 'Entrada' : 'Saída', style: TextStyle(fontSize: textSize)),
+                      Text(mov.descricao!,
+                          maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: textSize)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.edit, size: iconSize, color: Colors.blue.withOpacity(.75)),
+            onPressed: () {
+              print(widget.tableItems);
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.delete, size: iconSize, color: Colors.red.withOpacity(.75)),
+            onPressed: () {
+              mov.mov_type! ? _entradaController.deleteEntrada(mov.codigo!) : _saidaController.deleteSaida(mov.codigo!);
+
+              setState(() {
+                widget.tableItems.removeWhere((element) {
+                  if (element.mov_type == mov.mov_type) {
+                    return element.codigo == mov.codigo;
+                  }
+                  return false;
+                });
+              });
+              Navigator.pop(context, 'OK');
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.keyboard_return, size: iconSize, color: Colors.black.withOpacity(.75)),
+            onPressed: () {
+              Navigator.pop(context, 'OK');
+            },
+          )
+        ],
+      ),
     );
   }
 }

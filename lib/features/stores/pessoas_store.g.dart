@@ -25,6 +25,22 @@ mixin _$PessoasStore on _PessoasStore, Store {
     });
   }
 
+  late final _$editedUserAtom =
+      Atom(name: '_PessoasStore.editedUser', context: context);
+
+  @override
+  PessoaModel get editedUser {
+    _$editedUserAtom.reportRead();
+    return super.editedUser;
+  }
+
+  @override
+  set editedUser(PessoaModel value) {
+    _$editedUserAtom.reportWrite(value, super.editedUser, () {
+      super.editedUser = value;
+    });
+  }
+
   late final _$pessoasAtom =
       Atom(name: '_PessoasStore.pessoas', context: context);
 
@@ -54,6 +70,22 @@ mixin _$PessoasStore on _PessoasStore, Store {
   set pessoaLoaded(bool value) {
     _$pessoaLoadedAtom.reportWrite(value, super.pessoaLoaded, () {
       super.pessoaLoaded = value;
+    });
+  }
+
+  late final _$userCodigoAtom =
+      Atom(name: '_PessoasStore.userCodigo', context: context);
+
+  @override
+  int get userCodigo {
+    _$userCodigoAtom.reportRead();
+    return super.userCodigo;
+  }
+
+  @override
+  set userCodigo(int value) {
+    _$userCodigoAtom.reportWrite(value, super.userCodigo, () {
+      super.userCodigo = value;
     });
   }
 
@@ -165,11 +197,33 @@ mixin _$PessoasStore on _PessoasStore, Store {
       ActionController(name: '_PessoasStore', context: context);
 
   @override
+  List<PessoaModel> getLowerUsers() {
+    final _$actionInfo = _$_PessoasStoreActionController.startAction(
+        name: '_PessoasStore.getLowerUsers');
+    try {
+      return super.getLowerUsers();
+    } finally {
+      _$_PessoasStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void changeUser(PessoaModel newUser) {
     final _$actionInfo = _$_PessoasStoreActionController.startAction(
         name: '_PessoasStore.changeUser');
     try {
       return super.changeUser(newUser);
+    } finally {
+      _$_PessoasStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setEditedUser(PessoaModel newUser) {
+    final _$actionInfo = _$_PessoasStoreActionController.startAction(
+        name: '_PessoasStore.setEditedUser');
+    try {
+      return super.setEditedUser(newUser);
     } finally {
       _$_PessoasStoreActionController.endAction(_$actionInfo);
     }
@@ -220,6 +274,17 @@ mixin _$PessoasStore on _PessoasStore, Store {
   }
 
   @override
+  dynamic setAllControllers(PessoaModel pessoa) {
+    final _$actionInfo = _$_PessoasStoreActionController.startAction(
+        name: '_PessoasStore.setAllControllers');
+    try {
+      return super.setAllControllers(pessoa);
+    } finally {
+      _$_PessoasStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   PessoaModel getTempPessoa() {
     final _$actionInfo = _$_PessoasStoreActionController.startAction(
         name: '_PessoasStore.getTempPessoa');
@@ -245,8 +310,10 @@ mixin _$PessoasStore on _PessoasStore, Store {
   String toString() {
     return '''
 currentUser: ${currentUser},
+editedUser: ${editedUser},
 pessoas: ${pessoas},
 pessoaLoaded: ${pessoaLoaded},
+userCodigo: ${userCodigo},
 nomeControl: ${nomeControl},
 emailControl: ${emailControl},
 senhaControl: ${senhaControl},

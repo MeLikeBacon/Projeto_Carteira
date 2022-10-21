@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pdf_viewer_plugin/pdf_viewer_plugin.dart';
 import 'package:projeto_carteira/features/components/myAppBar.dart';
+import 'package:projeto_carteira/features/stores/pessoas_store.dart';
 import 'package:provider/provider.dart';
 
 import '../components/homeFAB.dart';
@@ -20,6 +21,7 @@ class _PDFViewState extends State<PDFView> {
   late EntradaStore _entradaStore;
   late SaidaStore _saidaStore;
   late MovsStore _movsStore;
+  late PessoasStore _pessoasStore;
 
   String? consultaDrop = 'Entradas e Saídas';
   List<String> consultaItems = ['Entradas e Saídas', 'Entradas', 'Saídas'];
@@ -31,6 +33,7 @@ class _PDFViewState extends State<PDFView> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    _pessoasStore = Provider.of<PessoasStore>(context);
     _entradaStore = Provider.of<EntradaStore>(context);
     _saidaStore = Provider.of<SaidaStore>(context);
     _movsStore = Provider.of<MovsStore>(context);
@@ -51,8 +54,7 @@ class _PDFViewState extends State<PDFView> {
           title: 'Exportar para PDF',
           actions: [
             IconButton(
-                onPressed: (() =>
-                    Navigator.pushReplacementNamed(context, '/search')),
+                onPressed: (() => Navigator.pushReplacementNamed(context, '/search')),
                 icon: const Icon(
                   Icons.receipt_long,
                   size: 40,
@@ -80,8 +82,7 @@ class _PDFViewState extends State<PDFView> {
                   style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Colors.blue),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15)))),
+                          RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)))),
                   child: Container(
                     alignment: Alignment.center,
                     height: 56,
@@ -98,14 +99,12 @@ class _PDFViewState extends State<PDFView> {
                           consultaDrop = value;
                         });
                       }),
-                      items: consultaItems
-                          .map<DropdownMenuItem<String>>((String value) {
+                      items: consultaItems.map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(
                             value,
-                            style: TextStyle(
-                                fontSize: textSize, color: Colors.white),
+                            style: TextStyle(fontSize: textSize, color: Colors.white),
                           ),
                         );
                       }).toList(),
@@ -123,8 +122,7 @@ class _PDFViewState extends State<PDFView> {
                 children: [
                   Expanded(
                     child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: Colors.blue)),
+                      style: OutlinedButton.styleFrom(side: const BorderSide(color: Colors.blue)),
                       onPressed: () async {
                         final data;
                         setState(() {
@@ -134,29 +132,23 @@ class _PDFViewState extends State<PDFView> {
                         switch (consultaDrop!) {
                           case 'Entradas e Saídas':
                             await _movsStore.emptyMovs();
-                            await _movsStore.loadMovs();
-                            data = await service
-                                .createMovsInvoice(_movsStore.movs);
-                            filePath = await service.savePdfFile(
-                                "relatorio_$number", data);
+                            await _movsStore.loadMovs(_pessoasStore.currentUser.codigo!);
+                            data = await service.createMovsInvoice(_movsStore.movs);
+                            filePath = await service.savePdfFile("relatorio_$number", data);
                             setState(() {});
                             break;
                           case 'Entradas':
                             await _entradaStore.emptyEntradas();
-                            await _entradaStore.loadEntradas();
-                            data = await service
-                                .createSpecificInvoice(_entradaStore.entradas);
-                            filePath = await service.savePdfFile(
-                                "relatorio_$number", data);
+                            await _entradaStore.loadEntradas(_pessoasStore.currentUser.codigo!);
+                            data = await service.createSpecificInvoice(_entradaStore.entradas);
+                            filePath = await service.savePdfFile("relatorio_$number", data);
                             setState(() {});
                             break;
                           case 'Saídas':
                             await _saidaStore.emptySaidas();
-                            await _saidaStore.loadSaidas();
-                            data = await service
-                                .createSpecificInvoice(_saidaStore.saidas);
-                            filePath = await service.savePdfFile(
-                                "relatorio_$number", data);
+                            await _saidaStore.loadSaidas(_pessoasStore.currentUser.codigo!);
+                            data = await service.createSpecificInvoice(_saidaStore.saidas);
+                            filePath = await service.savePdfFile("relatorio_$number", data);
                             setState(() {});
                             break;
                         }
@@ -174,8 +166,7 @@ class _PDFViewState extends State<PDFView> {
                   ),
                   Expanded(
                     child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: Colors.blue)),
+                      style: OutlinedButton.styleFrom(side: const BorderSide(color: Colors.blue)),
                       onPressed: () async {
                         final data;
                         setState(() {
@@ -184,24 +175,18 @@ class _PDFViewState extends State<PDFView> {
 
                         switch (consultaDrop!) {
                           case 'Entradas e Saídas':
-                            data = await service
-                                .createMovsInvoice(_movsStore.movs);
-                            filePath = await service.savePdfFile(
-                                "relatorio_$number", data);
+                            data = await service.createMovsInvoice(_movsStore.movs);
+                            filePath = await service.savePdfFile("relatorio_$number", data);
                             setState(() {});
                             break;
                           case 'Entradas':
-                            data = await service
-                                .createSpecificInvoice(_entradaStore.entradas);
-                            filePath = await service.savePdfFile(
-                                "relatorio_$number", data);
+                            data = await service.createSpecificInvoice(_entradaStore.entradas);
+                            filePath = await service.savePdfFile("relatorio_$number", data);
                             setState(() {});
                             break;
                           case 'Saídas':
-                            data = await service
-                                .createSpecificInvoice(_saidaStore.saidas);
-                            filePath = await service.savePdfFile(
-                                "relatorio_$number", data);
+                            data = await service.createSpecificInvoice(_saidaStore.saidas);
+                            filePath = await service.savePdfFile("relatorio_$number", data);
                             setState(() {});
                             break;
                         }

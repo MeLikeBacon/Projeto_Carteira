@@ -30,7 +30,7 @@ abstract class _PessoasStore with Store {
   @observable
   bool pessoaLoaded = true;
 
-  @computed
+  @action
   List<PessoaModel> getLowerUsers() {
     List<PessoaModel?> list = pessoas.map((e) {
       if (e.tipo != currentUser.tipo) {

@@ -5,6 +5,7 @@
   progress is lost
 * when pressing the back button on the add movement screen, dropdown rebuilds
 * plot not working properly
+* movs_view didchangedependecies cant load first of lowerusers in time
 
 ***
 
@@ -12,3 +13,8 @@
 
 * change field controllers to store 'set' functions
 * use library to resize widgets
+
+# Possible new features:
+
+* check if e-mail is valid
+* double check password

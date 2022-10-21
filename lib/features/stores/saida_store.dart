@@ -19,11 +19,9 @@ abstract class _SaidaStore with Store {
   bool saidaLoaded = true;
 
   @action
-  loadSaidas(
-      {String initialDate = '', String finalDate = '', int? personId}) async {
+  loadSaidas(int personId, {String initialDate = '', String finalDate = ''}) async {
     saidaLoaded = false;
-    saidas = await _saidaDao.getSaidas(
-        initialDate: initialDate, finalDate: finalDate, personId: personId);
+    saidas = await _saidaDao.getSaidas(personId, initialDate: initialDate, finalDate: finalDate);
     saidaLoaded = true;
   }
 

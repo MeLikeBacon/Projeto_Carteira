@@ -23,14 +23,11 @@ abstract class _MovsStore with Store {
   bool movsLoaded = true;
 
   @action
-  loadMovs(
-      {String initialDate = '', String finalDate = '', int? personId}) async {
+  loadMovs(int personId, {String initialDate = '', String finalDate = ''}) async {
     movsLoaded = false;
 
-    movs.addAll(await _entradaDao.getEntradas(
-        initialDate: initialDate, finalDate: finalDate, personId: personId));
-    movs.addAll(await _saidaDao.getSaidas(
-        initialDate: initialDate, finalDate: finalDate, personId: personId));
+    movs.addAll(await _entradaDao.getEntradas(personId, initialDate: initialDate, finalDate: finalDate));
+    movs.addAll(await _saidaDao.getSaidas(personId, initialDate: initialDate, finalDate: finalDate));
 
     movsLoaded = true;
   }
@@ -61,10 +58,7 @@ abstract class _MovsStore with Store {
 
   @computed
   double get movsValuesMax {
-    return movsTimeline.fold(
-        0.0,
-        (previousValue, element) =>
-            previousValue + (element.mov_type! ? element.valor! : 0));
+    return movsTimeline.fold(0.0, (previousValue, element) => previousValue + (element.mov_type! ? element.valor! : 0));
   }
 
   @computed

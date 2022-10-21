@@ -10,17 +10,15 @@ class SaidaDao extends BaseDao<SaidaModel> {
   @override
   String get tableName => 'saida';
 
-  getSaidas(
-      {String initialDate = '', String finalDate = '', int? personId}) async {
+  getSaidas(int personId, {String initialDate = '', String finalDate = ''}) async {
     List<SaidaModel> saidas = [];
 
     try {
       if (initialDate.isNotEmpty && finalDate.isNotEmpty) {
         saidas = await query(
-            "SELECT * FROM saida WHERE (data_saida BETWEEN '$initialDate' AND '$finalDate') ${personId != null ? 'AND pessoa = $personId' : ''}");
+            "SELECT * FROM saida WHERE pessoa = $personId AND (data_saida BETWEEN '$initialDate' AND '$finalDate')");
       } else {
-        saidas = await query(
-            'SELECT * FROM saida ${personId != null ? 'WHERE pessoa = $personId' : ''}');
+        saidas = await query('SELECT * FROM saida WHERE pessoa = $personId');
       }
 
       return saidas;
@@ -31,13 +29,11 @@ class SaidaDao extends BaseDao<SaidaModel> {
 
   updateSaida(SaidaModel updatedSaida) async {
     try {
-      await query(
-          'UPDATE saida SET descricao = ?, data_saida = ?, valor = ? WHERE codigo = ?;',
-          [
-            updatedSaida.descricao,
-            updatedSaida.data,
-            updatedSaida.valor,
-          ]);
+      await query('UPDATE saida SET descricao = ?, data_saida = ?, valor = ? WHERE codigo = ?;', [
+        updatedSaida.descricao,
+        updatedSaida.data,
+        updatedSaida.valor,
+      ]);
       print('updated saida, id: ${updatedSaida.codigo}');
     } catch (e) {
       print(e);

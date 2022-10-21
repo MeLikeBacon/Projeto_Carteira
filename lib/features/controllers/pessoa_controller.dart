@@ -10,8 +10,7 @@ class PessoaController {
   final PessoaDao _pessoaDao = PessoaDao();
 
   Future<bool> insertPessoa(PessoaModel pessoa) async {
-    List<PessoaModel> check = await _pessoaDao
-        .query("SELECT * FROM pessoas WHERE email = ?;", [pessoa.email]);
+    List<PessoaModel> check = await _pessoaDao.query("SELECT * FROM pessoas WHERE email = ?;", [pessoa.email]);
 
     if (check.isEmpty) {
       await _pessoaDao.save(pessoa);
@@ -23,13 +22,15 @@ class PessoaController {
   }
 
   Future<List<PessoaModel>> logInPessoa(String email, String senha) async {
-    return await _pessoaDao.query(
-        "SELECT * from pessoas WHERE email = ? AND senha = ?", [email, senha]);
+    return await _pessoaDao.query("SELECT * from pessoas WHERE email = ? AND senha = ?", [email, senha]);
+  }
+
+  Future<PessoaModel> findPessoaByID(int id) async {
+    return await _pessoaDao.getUserByID(id);
   }
 
   Future<List<PessoaModel>> findPessoaByEmail(String email) async {
-    return await _pessoaDao
-        .query("SELECT * from pessoas WHERE email = ?", [email]);
+    return await _pessoaDao.query("SELECT * from pessoas WHERE email = ?", [email]);
   }
 
   deletePessoa(int id) async {

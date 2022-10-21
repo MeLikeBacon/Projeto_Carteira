@@ -80,10 +80,10 @@ mixin _$MovsStore on _MovsStore, Store {
       AsyncAction('_MovsStore.loadMovs', context: context);
 
   @override
-  Future loadMovs(
-      {String initialDate = '', String finalDate = '', int? personId}) {
-    return _$loadMovsAsyncAction.run(() => super.loadMovs(
-        initialDate: initialDate, finalDate: finalDate, personId: personId));
+  Future loadMovs(int personId,
+      {String initialDate = '', String finalDate = ''}) {
+    return _$loadMovsAsyncAction.run(() => super
+        .loadMovs(personId, initialDate: initialDate, finalDate: finalDate));
   }
 
   late final _$_MovsStoreActionController =
