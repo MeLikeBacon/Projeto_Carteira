@@ -6,7 +6,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/widgets.dart';
 
-import 'models/movimento_abs.dart';
+import 'movement/models/movimento_abs.dart';
 
 // final pdfPinchController = pdfx.PdfControllerPinch(
 //   document: pdfx.PdfDocument.openAsset('assets/sample.pdf'),
@@ -43,13 +43,9 @@ class PdfInvoiceService {
     final List<CustomRow> elements = [
       CustomRow('Data (dd/mm/aaaa)', 'Descrição', 'Valor (R\$)', 'E/S'),
       for (var movimento in movs)
-        CustomRow(
-            UtilData.obterDataDDMMAAAA(movimento.data!),
-            movimento.descricao!,
-            UtilBrasilFields.obterReal(movimento.valor!),
-            movimento.mov_type! ? 'E' : 'S'),
-      CustomRow(
-          'Soma total', '', '', UtilBrasilFields.obterReal(getSumTotal(movs)!))
+        CustomRow(UtilData.obterDataDDMMAAAA(movimento.data!), movimento.descricao!,
+            UtilBrasilFields.obterReal(movimento.valor!), movimento.mov_type! ? 'E' : 'S'),
+      CustomRow('Soma total', '', '', UtilBrasilFields.obterReal(getSumTotal(movs)!))
     ];
 
     pdf.addPage(pw.Page(
@@ -73,8 +69,7 @@ class PdfInvoiceService {
           specific.descricao!,
           UtilBrasilFields.obterReal(specific.valor!),
         ),
-      CustomRow(
-          'Soma total', '', UtilBrasilFields.obterReal(getSumTotal(specifics)!))
+      CustomRow('Soma total', '', UtilBrasilFields.obterReal(getSumTotal(specifics)!))
     ];
 
     pdf.addPage(pw.Page(
@@ -108,32 +103,24 @@ class PdfInvoiceService {
                   pw.Expanded(
                       child: pw.Text(element.itemDate,
                           textAlign: pw.TextAlign.left,
-                          style: TextStyle(
-                              fontWeight: element == elements.first
-                                  ? FontWeight.bold
-                                  : FontWeight.normal))),
+                          style:
+                              TextStyle(fontWeight: element == elements.first ? FontWeight.bold : FontWeight.normal))),
                   pw.Expanded(
                       child: pw.Text(element.itemDesc,
                           textAlign: pw.TextAlign.right,
-                          style: TextStyle(
-                              fontWeight: element == elements.first
-                                  ? FontWeight.bold
-                                  : FontWeight.normal))),
+                          style:
+                              TextStyle(fontWeight: element == elements.first ? FontWeight.bold : FontWeight.normal))),
                   pw.Expanded(
                       child: pw.Text(element.itemValue,
                           textAlign: pw.TextAlign.right,
-                          style: TextStyle(
-                              fontWeight: element == elements.first
-                                  ? FontWeight.bold
-                                  : FontWeight.normal))),
+                          style:
+                              TextStyle(fontWeight: element == elements.first ? FontWeight.bold : FontWeight.normal))),
                   fourColumns
                       ? pw.Expanded(
                           child: pw.Text(element.itemType!,
                               textAlign: pw.TextAlign.right,
                               style: TextStyle(
-                                  fontWeight: element == elements.first
-                                      ? FontWeight.bold
-                                      : FontWeight.normal)))
+                                  fontWeight: element == elements.first ? FontWeight.bold : FontWeight.normal)))
                       : pw.Container(),
                 ],
               ),
@@ -146,9 +133,6 @@ class PdfInvoiceService {
 
   getSumTotal(List<Movimento> items) {
     return items.fold(
-        0.0,
-        (previousValue, element) =>
-            previousValue +
-            (element.mov_type! ? element.valor! : -element.valor!));
+        0.0, (previousValue, element) => previousValue + (element.mov_type! ? element.valor! : -element.valor!));
   }
 }

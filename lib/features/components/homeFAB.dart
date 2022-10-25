@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:projeto_carteira/features/stores/pessoas_store.dart';
+import 'package:projeto_carteira/features/account/stores/pessoas_store.dart';
 import 'package:provider/provider.dart';
 
 class HomeFAB extends StatefulWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'account/login_view.dart';
 import 'routes.dart';
-import 'views/login_view.dart';
 
 import 'package:syncfusion_localizations/syncfusion_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -21,7 +21,7 @@ class _MyAppState extends State<MyApp> {
       initialRoute: Routes.initial,
       routes: Routes.routes,
       theme: ThemeData.light(useMaterial3: true),
-      localizationsDelegates: [
+      localizationsDelegates: const [
         SfGlobalLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

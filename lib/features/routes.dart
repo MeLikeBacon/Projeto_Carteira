@@ -1,19 +1,19 @@
 // ignore_for_file: constant_identifier_names, prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:projeto_carteira/features/views/admin_view.dart';
-import 'package:projeto_carteira/features/views/forgor_view.dart';
-import 'package:projeto_carteira/features/views/home_view.dart';
-import 'package:projeto_carteira/features/views/login_view.dart';
-import 'package:projeto_carteira/features/views/manage_view.dart';
-import 'package:projeto_carteira/features/views/movs_view.dart';
-import 'package:projeto_carteira/features/views/plots_view.dart';
-import 'package:projeto_carteira/features/views/signup_view.dart';
-import 'package:projeto_carteira/features/views/userlist_view.dart';
 
-import 'views/account_view.dart';
-import 'views/pdf_view.dart';
-import 'views/search_view.dart';
+import 'account/forgor_view.dart';
+import 'account/login_view.dart';
+import 'account/account_view.dart';
+import 'account/signup_view.dart';
+import 'admin/admin_view.dart';
+import 'admin/manage_view.dart';
+import 'admin/userlist_view.dart';
+import 'home/home_view.dart';
+import 'movement/movs_view.dart';
+import 'movement/pdf_view.dart';
+import 'movement/plots_view.dart';
+import 'movement/search_view.dart';
 
 class Routes {
   static const initial = '/';
