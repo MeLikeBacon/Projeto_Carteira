@@ -1,5 +1,6 @@
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
+import 'package:projeto_carteira/features/account/models/homebutton_model.dart';
 import 'package:provider/provider.dart';
 
 import '../components/myAppBar.dart';
@@ -13,34 +14,47 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  bool gridLoaded = false;
+
   late PessoasStore _pessoasStore;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _pessoasStore = Provider.of<PessoasStore>(context);
+    // Quando a tela inicia em modo horizontal, ela faz uma animação com o gridview, iniciando todos os tiles
+    // minúsculos, mas com conteúdo dentro.
+    // Essa função serve pra esperar a animação terminar para mostrar o conteúdo do grid e não dar overflow.
+    Future.delayed(Duration(milliseconds: _pessoasStore.pessoaLoaded ? 350 : 200), () {
+      setState(() {
+        gridLoaded = true;
+      });
+    });
   }
 
-  List<IconData> iconButtons = [
-    Icons.manage_accounts,
-    Icons.account_balance_wallet,
-    Icons.receipt_long,
-    Icons.picture_as_pdf,
-    Icons.logout,
-  ];
-
-  List<String> iconLabels = ['Editar conta', 'Movimentar', 'Consultar', 'Exportar PDF', 'Sair'];
-
-  List<String> iconRefs = ['/account', '/movs', '/search', '/pdf', '/login'];
+  List<HomeButton> homeButtons = [],
+      fullHomeButtons = [
+        HomeButton(Icons.manage_accounts, 'Editar conta', '/account'),
+        HomeButton(Icons.account_balance_wallet, 'Movimentar', '/movs'),
+        HomeButton(Icons.receipt_long, 'Consultar', '/search'),
+        HomeButton(Icons.picture_as_pdf, 'Exportar PDF', '/pdf'),
+        HomeButton(Icons.logout, 'Sair', '/login'),
+      ];
 
   @override
   Widget build(BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
     var textSize = 14 + MediaQuery.of(context).size.width * 0.0075;
     var iconSize = 40 + MediaQuery.of(context).size.width * 0.0075;
+    var screenSize = MediaQuery.of(context).size;
     bool screenVertical = MediaQuery.of(context).orientation == Orientation.portrait;
 
-    void deslogar() {
+    if (screenVertical) {
+      homeButtons = [HomeButton(Icons.account_circle, '', ''), ...fullHomeButtons];
+    } else {
+      homeButtons = [...fullHomeButtons, HomeButton(Icons.account_circle, '', '')];
+    }
+
+    void logout() {
       showDialog(
           context: context,
           builder: (BuildContext context) => AlertDialog(
@@ -51,8 +65,7 @@ class _HomeViewState extends State<HomeView> {
                     onPressed: () {
                       Navigator.pop(context, 'SIM');
                       _pessoasStore.logout();
-                      Navigator.pushNamedAndRemoveUntil(
-                          context, iconRefs[screenVertical ? 5 - 1 : 5], ModalRoute.withName('/'));
+                      Navigator.pushNamedAndRemoveUntil(context, '/login', ModalRoute.withName('/'));
                     },
                     child: const Text('SIM'),
                   ),
@@ -66,119 +79,83 @@ class _HomeViewState extends State<HomeView> {
               ));
     }
 
-    List<Widget> homePage = [
-      Expanded(
-        child: GridView.count(
-          crossAxisCount: 2,
-          scrollDirection: screenVertical ? Axis.vertical : Axis.horizontal,
-          children: List.generate(screenVertical ? 6 : 5, (index) {
-            return InkWell(
-              onTap: (() {
-                _pessoasStore.setEditedUser(_pessoasStore.currentUser);
-                _pessoasStore.setAllControllers(_pessoasStore.editedUser);
-                print(_pessoasStore.currentUser);
-                if (screenVertical && index == 0) {
-                } else {
-                  if (iconLabels[screenVertical ? index - 1 : index] == 'Sair') {
-                    deslogar();
-                  } else {
-                    Navigator.pushNamed(context, iconRefs[screenVertical ? index - 1 : index]);
-                  }
-                }
-              }),
-              child: Ink(
-                color: index == 0 || index == 3 || index == 4 ? const Color.fromARGB(139, 206, 235, 247) : null,
-                child: index == 0 && screenVertical
-                    ? Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.account_circle,
-                            size: iconSize,
-                          ),
-                          const SizedBox(
-                            height: 3,
-                          ),
-                          Text(
-                            _pessoasStore.currentUser.nome!,
-                            style: Theme.of(context).textTheme.titleMedium!.copyWith(fontSize: textSize),
-                          ),
-                          Text(
-                            UtilBrasilFields.obterReal(_pessoasStore.currentUser.saldo!),
-                            style: TextStyle(fontSize: textSize, color: Theme.of(context).hintColor),
-                          ),
-                        ],
-                      )
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            iconButtons[screenVertical ? index - 1 : index],
-                            size: iconSize,
-                          ),
-                          const SizedBox(
-                            height: 3,
-                          ),
-                          Text(
-                            iconLabels[screenVertical ? index - 1 : index],
-                            style: TextStyle(fontSize: textSize),
-                          )
-                        ],
-                      ),
+    Widget gridTile(int index) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            homeButtons[index].icone,
+            size: iconSize,
+          ),
+          const SizedBox(
+            height: 3,
+          ),
+          Column(
+            children: [
+              Text(
+                homeButtons[index].icone == Icons.account_circle
+                    ? _pessoasStore.currentUser.nome!
+                    : homeButtons[index].label,
+                style: TextStyle(fontSize: textSize),
               ),
-            );
+              homeButtons[index].icone == Icons.account_circle
+                  ? Text(
+                      '${UtilBrasilFields.obterReal(_pessoasStore.currentUser.saldo!)}${screenVertical ? '' : ' / ${UtilBrasilFields.obterReal(_pessoasStore.currentUser.minimo!)}'}',
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: textSize),
+                    )
+                  : const SizedBox(),
+            ],
+          )
+        ],
+      );
+    }
+
+    int colorNum = 0;
+
+    Widget homePage = GridView.count(
+      primary: false,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisCount: 2,
+      scrollDirection: screenVertical ? Axis.vertical : Axis.horizontal,
+      children: List.generate(screenVertical ? homeButtons.length : homeButtons.length - 1, (index) {
+        bool firstColor = index == colorNum;
+
+        if (index == colorNum + 3) {
+          colorNum = index + 1;
+          firstColor = true;
+        }
+
+        return InkWell(
+          onTap: (() {
+            _pessoasStore.setEditedUser(_pessoasStore.currentUser);
+            _pessoasStore.setAllControllers(_pessoasStore.editedUser);
+
+            homeButtons[index].icone == Icons.account_circle
+                ? null
+                : homeButtons[index].label == 'Sair'
+                    ? logout()
+                    : Navigator.pushNamed(context, homeButtons[index].ref);
           }),
-        ),
-      ),
-      screenVertical
-          ? Container()
-          : InkWell(
-              onTap: () {},
-              child: Container(
-                width: (screenSize.width) - (screenSize.height * 1.5 - 120),
-                color: const Color.fromARGB(177, 206, 235, 247),
-                child: Ink(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.account_circle,
-                        size: iconSize,
-                      ),
-                      const SizedBox(
-                        height: 3,
-                      ),
-                      Text(
-                        _pessoasStore.currentUser.nome!,
-                        style: Theme.of(context).textTheme.titleMedium!.copyWith(fontSize: textSize),
-                      ),
-                      Text(
-                        'R\$${_pessoasStore.currentUser.saldo!.toStringAsFixed(2)} / R\$${_pessoasStore.currentUser.minimo!.toStringAsFixed(2)}',
-                        style: TextStyle(fontSize: textSize),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-    ];
+          child: Ink(
+              color: firstColor ? const Color.fromARGB(139, 206, 235, 247) : null,
+              child: screenVertical || gridLoaded ? gridTile(index) : const SizedBox()),
+        );
+      }),
+    );
+
+    Widget horizontalProfile = Expanded(
+      child: InkWell(
+          onTap: () {},
+          child: Ink(color: const Color.fromARGB(139, 206, 235, 247), child: gridTile(homeButtons.length - 1))),
+    );
 
     return Scaffold(
-      appBar: MyAppBar(),
-      body: iconRefs.isNotEmpty
-          ? screenVertical
-              ? Column(
-                  children: homePage,
-                )
-              : Row(
-                  children: homePage,
-                )
-          : const Center(
-              child: CircularProgressIndicator(),
-            ),
-    );
+        appBar: MyAppBar(),
+        body: screenVertical
+            ? homePage
+            : Row(
+                children: [homePage, horizontalProfile],
+              ));
   }
 }

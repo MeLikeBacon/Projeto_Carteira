@@ -83,7 +83,7 @@ class _ForgorViewState extends State<ForgorView> {
 
     var temp = await _pessoaController.findPessoaByEmail(_pessoasStore.forms.emailControl.text);
 
-    if (temp.isEmpty) {
+    if (temp == null) {
       setState(() {
         errorText = 'E-mail inválido';
       });
@@ -91,8 +91,8 @@ class _ForgorViewState extends State<ForgorView> {
     }
 
     if (!mounted) return;
-    Provider.of<NotificationService>(context, listen: false).showNotification(CustomNotification(
-        id: 1, title: 'Senha da conta ${temp.first.email}', body: temp.first.senha, payload: '/login'));
+    Provider.of<NotificationService>(context, listen: false).showNotification(
+        CustomNotification(id: 1, title: 'Senha da conta ${temp.email}', body: temp.senha, payload: '/login'));
 
     _pessoasStore.clearForms();
   }

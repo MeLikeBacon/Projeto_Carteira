@@ -1,5 +1,6 @@
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
+import 'package:projeto_carteira/features/account/models/pessoa_model.dart';
 
 import 'package:projeto_carteira/features/movement/controllers/entrada_controller.dart';
 import 'package:projeto_carteira/features/account/controllers/pessoa_controller.dart';
@@ -162,8 +163,8 @@ class _ConsultaTableState extends State<ConsultaTable> {
   }
 
   showMovInfo(Movimento mov, double textSize, double iconSize) async {
-    var user = await _pessoaController.findPessoaByID(mov.pessoa!);
-    var resp = await _pessoaController.findPessoaByID(mov.responsavel!);
+    var user = await _pessoaController.findPessoaByID(mov.pessoa!) ?? PessoaModel();
+    var resp = await _pessoaController.findPessoaByID(mov.responsavel!) ?? PessoaModel();
 
     showDialog(
       context: context,
@@ -255,7 +256,7 @@ class _ConsultaTableState extends State<ConsultaTable> {
           IconButton(
             icon: Icon(Icons.delete, size: iconSize, color: Colors.red.withOpacity(.75)),
             onPressed: () {
-              mov.mov_type! ? _entradaController.deleteEntrada(mov.codigo!) : _saidaController.deleteSaida(mov.codigo!);
+              mov.mov_type! ? _entradaController.deleteEntrada(mov, user) : _saidaController.deleteSaida(mov, user);
 
               setState(() {
                 widget.tableItems.removeWhere((element) {

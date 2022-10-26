@@ -20,20 +20,12 @@ class PessoaDao extends BaseDao<PessoaModel> {
     }
   }
 
-  getUserByID(int id) async {
+  getUsersByColumn(String column, String args) async {
     try {
-      List<PessoaModel> pessoa = await query('SELECT * FROM $tableName WHERE codigo = $id');
-      return pessoa.first;
+      List<PessoaModel> pessoas = await query('SELECT * FROM $tableName WHERE $column = ?', [args]);
+      return pessoas;
     } catch (e) {
-      print(e);
-    }
-  }
-
-  updateSaldo(int pessoaId, double newSaldo) async {
-    try {
-      await query('UPDATE pessoas SET saldo = ? WHERE codigo = ?;', [newSaldo, pessoaId]);
-    } catch (e) {
-      print(e);
+      print('ERRO: $e');
     }
   }
 

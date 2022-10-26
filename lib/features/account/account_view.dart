@@ -1,11 +1,10 @@
-import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:projeto_carteira/features/components/myAppBar.dart';
 import 'package:projeto_carteira/features/account/stores/pessoas_store.dart';
 import 'package:provider/provider.dart';
 
 import '../components/homeFAB.dart';
+import 'components/form_field.dart';
 import 'controllers/pessoa_controller.dart';
 import 'models/pessoa_model.dart';
 
@@ -21,7 +20,6 @@ class _AccountViewState extends State<AccountView> {
   List<TextEditingController> controls = [];
 
   late PessoasStore _pessoasStore;
-  int nFields = 4;
 
   @override
   void didChangeDependencies() {
@@ -47,44 +45,11 @@ class _AccountViewState extends State<AccountView> {
     var textSize = 12 + MediaQuery.of(context).size.width * 0.0075;
     var iconSize = 25 + MediaQuery.of(context).size.width * 0.0075;
 
-    Widget formField(String labelText, TextEditingController control, String? errorText) {
-      return TextFormField(
-        obscureText: labelText == 'Senha' ? !visible : false,
-        keyboardType: labelText == 'Mínimo' ? TextInputType.number : null,
-        inputFormatters:
-            labelText == 'Mínimo' ? [FilteringTextInputFormatter.digitsOnly, CentavosInputFormatter()] : null,
-        controller: control,
-        style: TextStyle(fontSize: textSize),
-        decoration: InputDecoration(
-          errorText: errorText,
-          border: const OutlineInputBorder(),
-          labelText: labelText,
-          suffixIcon: labelText == 'Senha'
-              ? IconButton(
-                  onPressed: (() {
-                    setState(() {
-                      visible = !visible;
-                    });
-                  }),
-                  icon: Icon(
-                    visible ? Icons.visibility : Icons.visibility_off,
-                    size: iconSize,
-                  ),
-                )
-              : IconButton(
-                  onPressed: control.clear,
-                  icon: const Icon(Icons.cancel_outlined),
-                ),
-        ),
-      );
-    }
-
     return Scaffold(
         appBar: MyAppBar(
           title: 'Alterar conta',
         ),
         body: Center(
-          heightFactor: 1.15,
           child: _pessoasStore.pessoaLoaded
               ? Container(
                   constraints: const BoxConstraints(maxWidth: 700),
@@ -92,13 +57,15 @@ class _AccountViewState extends State<AccountView> {
                   margin: const EdgeInsets.symmetric(vertical: 20),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Expanded(
+                      Flexible(
                         child: ListView.builder(
-                            itemCount: nFields,
+                            primary: false,
+                            shrinkWrap: true,
+                            itemCount: controls.length,
                             itemBuilder: (context, int index) {
-                              return formField(labels[index], controls[index], errorTextVar[index]);
+                              return MyFormField(
+                                  labelText: labels[index], control: controls[index], errorText: errorTextVar[index]);
                             }),
                       ),
                       Container(
@@ -124,7 +91,6 @@ class _AccountViewState extends State<AccountView> {
                               ],
                             )),
                       ),
-                      SizedBox(height: iconSize)
                     ],
                   ),
                 )
@@ -136,7 +102,7 @@ class _AccountViewState extends State<AccountView> {
   void changeFun(PessoaModel tempPessoa) async {
     int vazio = 0;
     setState(() {
-      for (int i = 0; i < nFields; i++) {
+      for (int i = 0; i < controls.length; i++) {
         if (controls[i].text.isEmpty) {
           errorTextVar[i] = 'Este campo está incompleto';
           vazio++;
@@ -145,6 +111,13 @@ class _AccountViewState extends State<AccountView> {
         }
       }
     });
-    vazio == 0 ? _pessoaController.updatePessoaWhole(_pessoasStore.editedUser, tempPessoa) : null;
+    if (vazio == 0) {
+      _pessoaController.updatePessoaWhole(_pessoasStore.editedUser, tempPessoa);
+      if (!mounted) return;
+      const snackBar = SnackBar(
+        content: Text('Conta atualizada'),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 }

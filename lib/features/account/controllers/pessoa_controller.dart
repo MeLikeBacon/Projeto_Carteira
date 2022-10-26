@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:projeto_carteira/features/account/models/pessoa_model.dart';
 import 'package:projeto_carteira/sql/db_helper.dart';
 import 'package:sqflite/sqflite.dart';
@@ -25,12 +24,14 @@ class PessoaController {
     return await _pessoaDao.query("SELECT * from pessoas WHERE email = ? AND senha = ?", [email, senha]);
   }
 
-  Future<PessoaModel> findPessoaByID(int id) async {
-    return await _pessoaDao.getUserByID(id);
+  Future<PessoaModel?> findPessoaByID(int id) async {
+    List<PessoaModel?> ids = await _pessoaDao.getUsersByColumn('codigo', id.toString());
+    return ids.first;
   }
 
-  Future<List<PessoaModel>> findPessoaByEmail(String email) async {
-    return await _pessoaDao.query("SELECT * from pessoas WHERE email = ?", [email]);
+  Future<PessoaModel?> findPessoaByEmail(String email) async {
+    List<PessoaModel?> emails = await _pessoaDao.getUsersByColumn('email', email);
+    return emails.first;
   }
 
   deletePessoa(int id) async {

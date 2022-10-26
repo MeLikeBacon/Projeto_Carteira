@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:projeto_carteira/features/account/daos/pessoa_dao.dart';
+import 'package:projeto_carteira/features/account/controllers/pessoa_controller.dart';
 import 'package:projeto_carteira/features/account/models/pessoa_model.dart';
+import 'package:projeto_carteira/features/movement/models/movimento_abs.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../../sql/db_helper.dart';
@@ -10,17 +10,20 @@ import '../models/entrada_model.dart';
 class EntradaController {
   Future<Database?> get db => DatabaseHelper.getInstance().db;
   final EntradaDao _entradaDao = EntradaDao();
-  final PessoaDao _pessoaDao = PessoaDao();
+  final PessoaController _pessoaController = PessoaController();
 
   insertEntrada(EntradaModel entrada, PessoaModel pessoa) async {
     pessoa.saldo = pessoa.saldo! + entrada.valor!;
     double newSaldo = pessoa.saldo!;
-    await _pessoaDao.updateSaldo(entrada.pessoa!, newSaldo);
+    await _pessoaController.updatePessoaField(entrada.pessoa!, 'saldo', newSaldo.toString());
     await _entradaDao.save(entrada);
   }
 
-  deleteEntrada(int id) async {
-    await _entradaDao.delete(id, 'codigo');
+  deleteEntrada(Movimento entrada, PessoaModel pessoa) async {
+    pessoa.saldo = pessoa.saldo! - entrada.valor!;
+    double newSaldo = pessoa.saldo!;
+    await _pessoaController.updatePessoaField(entrada.pessoa!, 'saldo', newSaldo.toString());
+    await _entradaDao.delete(entrada.codigo!, 'codigo');
   }
 
   deleteSingleUserEntradas(int id) async {

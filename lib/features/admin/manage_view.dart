@@ -149,7 +149,8 @@ class _ManageViewState extends State<ManageView> {
                                 errorTextMinimo = isFieldNull(_pessoasStore.forms.minimumControl);
                               });
                               if (numValidFields == 4) {
-                                List<PessoaModel> exists =
+                                List<PessoaModel?> exists = [];
+                                exists[0] =
                                     await _pessoaController.findPessoaByEmail(_pessoasStore.forms.emailControl.text);
                                 if (exists.isEmpty) {
                                   _pessoaController.insertPessoa(_pessoasStore.getTempPessoa());
@@ -164,6 +165,7 @@ class _ManageViewState extends State<ManageView> {
                                 final snackBar = SnackBar(
                                   content: Text(snackContent),
                                 );
+                                if (!mounted) return;
                                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
                               }
                             },
