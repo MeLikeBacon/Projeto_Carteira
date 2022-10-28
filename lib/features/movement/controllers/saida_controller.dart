@@ -8,12 +8,13 @@ import '../models/movimento_abs.dart';
 import '../models/saida_model.dart';
 
 class SaidaController {
-  Future<Database?> get db =>
-      DatabaseHelper
-          .getInstance()
-          .db;
+  Future<Database?> get db => DatabaseHelper.getInstance().db;
   final SaidaDao _saidaDao = SaidaDao();
   final PessoaController _pessoaController = PessoaController();
+
+  Future<List<SaidaModel>> getSaidas(int personId, {String initialDate = '', String finalDate = ''}) async {
+    return await _saidaDao.getSaidas(personId, initialDate: initialDate, finalDate: finalDate);
+  }
 
   insertSaida(SaidaModel saida, PessoaModel pessoa) async {
     pessoa.saldo = pessoa.saldo! - saida.valor!;

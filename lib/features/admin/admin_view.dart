@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:projeto_carteira/features/account/stores/pessoas_store.dart';
 import 'package:provider/provider.dart';
 
+import '../account/models/homebutton_model.dart';
 import '../components/myAppBar.dart';
 
 class AdminView extends StatefulWidget {
@@ -12,17 +13,14 @@ class AdminView extends StatefulWidget {
 }
 
 class _AdminViewState extends State<AdminView> {
-  List<IconData> iconButtons = [
-    Icons.group_add,
-    Icons.person_search,
-    Icons.account_balance_wallet,
-    Icons.receipt_long,
-    Icons.logout,
+
+  List<HomeButton> adminButtons = [
+    HomeButton(Icons.group_add, 'Cadastrar usuários', '/manage'),
+    HomeButton(Icons.person_search, 'Consultar usuários', '/userlist'),
+    HomeButton(Icons.account_balance_wallet, 'Movimentar', '/movs'),
+    HomeButton(Icons.receipt_long, 'Consultar movimentos', '/search'),
+    HomeButton(Icons.logout, 'Sair', '/login')
   ];
-
-  List<String> iconLabels = ['Cadastrar usuários', 'Consultar usuários', 'Movimentar', 'Consultar movimentos', 'Sair'];
-
-  List<String> iconRefs = ['/manage', '/userlist', '/movs', '/search', '/login'];
 
   late PessoasStore _pessoasStore;
 
@@ -34,15 +32,11 @@ class _AdminViewState extends State<AdminView> {
 
   @override
   Widget build(BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
-    var textSize = 14 + MediaQuery.of(context).size.width * 0.0075;
-    var iconSize = 40 + MediaQuery.of(context).size.width * 0.0075;
-    bool screenVertical = MediaQuery.of(context).orientation == Orientation.portrait;
-
     void deslogar() {
       showDialog(
           context: context,
-          builder: (BuildContext context) => AlertDialog(
+          builder: (BuildContext context) =>
+              AlertDialog(
                 title: const Text('Saindo'),
                 content: const Text('Deseja realmente sair de sua conta?'),
                 actions: <Widget>[
@@ -69,19 +63,19 @@ class _AdminViewState extends State<AdminView> {
       body: ListView.separated(
           itemBuilder: (BuildContext context, int index) {
             return ListTile(
-              leading: Icon(iconButtons[index]),
-              title: Text(iconLabels[index]),
+              leading: Icon(adminButtons[index].icone),
+              title: Text(adminButtons[index].label),
               onTap: () {
-                if (index == (iconLabels.length - 1)) {
+                if (index == (adminButtons.length - 1)) {
                   deslogar();
                 } else {
-                  Navigator.pushNamed(context, iconRefs[index]);
+                  Navigator.pushNamed(context, adminButtons[index].ref);
                 }
               },
             );
           },
           separatorBuilder: (BuildContext context, int index) => const Divider(),
-          itemCount: iconLabels.length),
+          itemCount: adminButtons.length),
     );
   }
 }

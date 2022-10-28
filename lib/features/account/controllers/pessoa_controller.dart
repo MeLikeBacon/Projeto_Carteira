@@ -8,6 +8,10 @@ class PessoaController {
   Future<Database?> get db => DatabaseHelper.getInstance().db;
   final PessoaDao _pessoaDao = PessoaDao();
 
+  Future<List<PessoaModel>> getUsers() async {
+    return await _pessoaDao.getPessoas();
+  }
+
   Future<bool> insertPessoa(PessoaModel pessoa) async {
     List<PessoaModel> check = await _pessoaDao.query("SELECT * FROM pessoas WHERE email = ?;", [pessoa.email]);
 
@@ -32,6 +36,16 @@ class PessoaController {
   Future<PessoaModel?> findPessoaByEmail(String email) async {
     List<PessoaModel?> emails = await _pessoaDao.getUsersByColumn('email', email);
     return emails.first;
+  }
+
+  Future<PessoaModel?> findLowerPessoaByEmail(String email, String tipo) async {
+    List<PessoaModel?> lower = await _pessoaDao.getLowerUsersByColumn('email', email, tipo);
+    return lower.first;
+  }
+
+  Future<PessoaModel?> findLowerPessoa(String tipo) async {
+    List<PessoaModel?> lower = await _pessoaDao.getLowerUsers(tipo);
+    return lower.first;
   }
 
   deletePessoa(int id) async {

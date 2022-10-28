@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
-import 'package:projeto_carteira/features/movement/daos/saida_dao.dart';
+import 'package:projeto_carteira/features/movement/controllers/saida_controller.dart';
 
 import '../models/saida_model.dart';
 
@@ -11,7 +10,7 @@ class SaidaStore = _SaidaStore with _$SaidaStore;
 
 // The store-class
 abstract class _SaidaStore with Store {
-  final SaidaDao _saidaDao = SaidaDao();
+  final SaidaController _saidaController = SaidaController();
 
   @observable
   List<SaidaModel> saidas = [];
@@ -22,7 +21,7 @@ abstract class _SaidaStore with Store {
   @action
   loadSaidas(int personId, {String initialDate = '', String finalDate = ''}) async {
     saidaLoaded = false;
-    saidas = await _saidaDao.getSaidas(personId, initialDate: initialDate, finalDate: finalDate);
+    saidas = await _saidaController.getSaidas(personId, initialDate: initialDate, finalDate: finalDate);
     saidaLoaded = true;
   }
 

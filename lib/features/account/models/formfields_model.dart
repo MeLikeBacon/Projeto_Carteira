@@ -7,10 +7,10 @@ class FormFields {
   TextEditingController senhaControl = TextEditingController();
   TextEditingController senha2Control = TextEditingController();
   TextEditingController minimumControl = TextEditingController();
-  String? typeControl;
+  String typeControl;
 
   FormFields(this.nomeControl, this.emailControl, this.senhaControl, this.minimumControl, this.senha2Control,
-      {this.typeControl});
+      this.typeControl);
 
   @override
   String toString() {
@@ -31,9 +31,8 @@ class FormFields {
   }
 
   factory FormFields.fromJson(Map<String, dynamic> json) {
-    return FormFields(
-        json['nomeControl'], json['emailControl'], json['senhaControl'], json['minimumControl'], json['senha2Control'],
-        typeControl: json['typeControl']);
+    return FormFields(json['nomeControl'], json['emailControl'], json['senhaControl'], json['minimumControl'],
+        json['senha2Control'], json['typeControl']);
   }
 
   String toJson() => json.encode(toMap());

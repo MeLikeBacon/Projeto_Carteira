@@ -29,10 +29,29 @@ class PessoaDao extends BaseDao<PessoaModel> {
     }
   }
 
+  getLowerUsersByColumn(String column, String args, String tipo) async {
+    try {
+      List<PessoaModel> pessoas =
+          await query("SELECT * FROM $tableName WHERE $column = ? AND tipo IS NOT '$tipo'", [args]);
+      return pessoas;
+    } catch (e) {
+      print('ERRO: $e');
+    }
+  }
+
+  getLowerUsers(String tipo) async {
+    try {
+      List<PessoaModel> pessoas = await query("SELECT * FROM $tableName WHERE tipo IS NOT '$tipo'");
+      return pessoas;
+    } catch (e) {
+      print('ERRO: $e');
+    }
+  }
+
   updateUser(PessoaModel updatedPessoa) async {
     try {
       await query(
-          'UPDATE pessoas SET nome = ?, email = ?, senha = ?, minimo = ?, saldo = ?, tipo = ? WHERE codigo = ?;', [
+          "UPDATE pessoas SET nome = ?, email = ?, senha = ?, minimo = ?, saldo = ?, tipo = ? WHERE codigo = ?;", [
         updatedPessoa.nome,
         updatedPessoa.email,
         updatedPessoa.senha,

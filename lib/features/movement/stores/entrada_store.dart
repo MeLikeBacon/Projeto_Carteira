@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:mobx/mobx.dart';
+import 'package:projeto_carteira/features/movement/controllers/entrada_controller.dart';
 import 'package:projeto_carteira/features/movement/daos/entrada_dao.dart';
 
 import '../models/entrada_model.dart';
@@ -11,7 +12,7 @@ class EntradaStore = _EntradaStore with _$EntradaStore;
 
 // The store-class
 abstract class _EntradaStore with Store {
-  final EntradaDao _entradaDao = EntradaDao();
+  final EntradaController _entradaController = EntradaController();
 
   @observable
   List<EntradaModel> entradas = [];
@@ -22,7 +23,7 @@ abstract class _EntradaStore with Store {
   @action
   loadEntradas(int personId, {String initialDate = '', String finalDate = ''}) async {
     entradaLoaded = false;
-    entradas = await _entradaDao.getEntradas(personId, initialDate: initialDate, finalDate: finalDate);
+    entradas = await _entradaController.getEntradas(personId, initialDate: initialDate, finalDate: finalDate);
     entradaLoaded = true;
   }
 

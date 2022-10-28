@@ -9,7 +9,8 @@ part of 'pessoas_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$PessoasStore on _PessoasStore, Store {
-  late final _$currentUserAtom = Atom(name: '_PessoasStore.currentUser', context: context);
+  late final _$currentUserAtom =
+      Atom(name: '_PessoasStore.currentUser', context: context);
 
   @override
   PessoaModel get currentUser {
@@ -24,7 +25,8 @@ mixin _$PessoasStore on _PessoasStore, Store {
     });
   }
 
-  late final _$editedUserAtom = Atom(name: '_PessoasStore.editedUser', context: context);
+  late final _$editedUserAtom =
+      Atom(name: '_PessoasStore.editedUser', context: context);
 
   @override
   PessoaModel get editedUser {
@@ -39,7 +41,24 @@ mixin _$PessoasStore on _PessoasStore, Store {
     });
   }
 
-  late final _$pessoasAtom = Atom(name: '_PessoasStore.pessoas', context: context);
+  late final _$firstLowerUserAtom =
+      Atom(name: '_PessoasStore.firstLowerUser', context: context);
+
+  @override
+  PessoaModel get firstLowerUser {
+    _$firstLowerUserAtom.reportRead();
+    return super.firstLowerUser;
+  }
+
+  @override
+  set firstLowerUser(PessoaModel value) {
+    _$firstLowerUserAtom.reportWrite(value, super.firstLowerUser, () {
+      super.firstLowerUser = value;
+    });
+  }
+
+  late final _$pessoasAtom =
+      Atom(name: '_PessoasStore.pessoas', context: context);
 
   @override
   List<PessoaModel> get pessoas {
@@ -54,7 +73,8 @@ mixin _$PessoasStore on _PessoasStore, Store {
     });
   }
 
-  late final _$pessoaLoadedAtom = Atom(name: '_PessoasStore.pessoaLoaded', context: context);
+  late final _$pessoaLoadedAtom =
+      Atom(name: '_PessoasStore.pessoaLoaded', context: context);
 
   @override
   bool get pessoaLoaded {
@@ -84,18 +104,29 @@ mixin _$PessoasStore on _PessoasStore, Store {
     });
   }
 
-  late final _$loadPessoasAsyncAction = AsyncAction('_PessoasStore.loadPessoas', context: context);
+  late final _$setFirstUserAsyncAction =
+      AsyncAction('_PessoasStore.setFirstUser', context: context);
+
+  @override
+  Future<dynamic> setFirstUser() {
+    return _$setFirstUserAsyncAction.run(() => super.setFirstUser());
+  }
+
+  late final _$loadPessoasAsyncAction =
+      AsyncAction('_PessoasStore.loadPessoas', context: context);
 
   @override
   Future loadPessoas() {
     return _$loadPessoasAsyncAction.run(() => super.loadPessoas());
   }
 
-  late final _$_PessoasStoreActionController = ActionController(name: '_PessoasStore', context: context);
+  late final _$_PessoasStoreActionController =
+      ActionController(name: '_PessoasStore', context: context);
 
   @override
   List<PessoaModel> getLowerUsers() {
-    final _$actionInfo = _$_PessoasStoreActionController.startAction(name: '_PessoasStore.getLowerUsers');
+    final _$actionInfo = _$_PessoasStoreActionController.startAction(
+        name: '_PessoasStore.getLowerUsers');
     try {
       return super.getLowerUsers();
     } finally {
@@ -105,7 +136,8 @@ mixin _$PessoasStore on _PessoasStore, Store {
 
   @override
   void changeUser(PessoaModel newUser) {
-    final _$actionInfo = _$_PessoasStoreActionController.startAction(name: '_PessoasStore.changeUser');
+    final _$actionInfo = _$_PessoasStoreActionController.startAction(
+        name: '_PessoasStore.changeUser');
     try {
       return super.changeUser(newUser);
     } finally {
@@ -115,7 +147,8 @@ mixin _$PessoasStore on _PessoasStore, Store {
 
   @override
   void setEditedUser(PessoaModel newUser) {
-    final _$actionInfo = _$_PessoasStoreActionController.startAction(name: '_PessoasStore.setEditedUser');
+    final _$actionInfo = _$_PessoasStoreActionController.startAction(
+        name: '_PessoasStore.setEditedUser');
     try {
       return super.setEditedUser(newUser);
     } finally {
@@ -125,7 +158,8 @@ mixin _$PessoasStore on _PessoasStore, Store {
 
   @override
   void deleteUser(int id) {
-    final _$actionInfo = _$_PessoasStoreActionController.startAction(name: '_PessoasStore.deleteUser');
+    final _$actionInfo = _$_PessoasStoreActionController.startAction(
+        name: '_PessoasStore.deleteUser');
     try {
       return super.deleteUser(id);
     } finally {
@@ -135,7 +169,8 @@ mixin _$PessoasStore on _PessoasStore, Store {
 
   @override
   dynamic logout() {
-    final _$actionInfo = _$_PessoasStoreActionController.startAction(name: '_PessoasStore.logout');
+    final _$actionInfo = _$_PessoasStoreActionController.startAction(
+        name: '_PessoasStore.logout');
     try {
       return super.logout();
     } finally {
@@ -145,7 +180,8 @@ mixin _$PessoasStore on _PessoasStore, Store {
 
   @override
   dynamic emptyPessoas() {
-    final _$actionInfo = _$_PessoasStoreActionController.startAction(name: '_PessoasStore.emptyPessoas');
+    final _$actionInfo = _$_PessoasStoreActionController.startAction(
+        name: '_PessoasStore.emptyPessoas');
     try {
       return super.emptyPessoas();
     } finally {
@@ -155,7 +191,8 @@ mixin _$PessoasStore on _PessoasStore, Store {
 
   @override
   dynamic setUserType(dynamic value) {
-    final _$actionInfo = _$_PessoasStoreActionController.startAction(name: '_PessoasStore.setUserType');
+    final _$actionInfo = _$_PessoasStoreActionController.startAction(
+        name: '_PessoasStore.setUserType');
     try {
       return super.setUserType(value);
     } finally {
@@ -165,7 +202,8 @@ mixin _$PessoasStore on _PessoasStore, Store {
 
   @override
   dynamic clearForms() {
-    final _$actionInfo = _$_PessoasStoreActionController.startAction(name: '_PessoasStore.clearForms');
+    final _$actionInfo = _$_PessoasStoreActionController.startAction(
+        name: '_PessoasStore.clearForms');
     try {
       return super.clearForms();
     } finally {
@@ -175,7 +213,8 @@ mixin _$PessoasStore on _PessoasStore, Store {
 
   @override
   dynamic setAllControllers(PessoaModel pessoa) {
-    final _$actionInfo = _$_PessoasStoreActionController.startAction(name: '_PessoasStore.setAllControllers');
+    final _$actionInfo = _$_PessoasStoreActionController.startAction(
+        name: '_PessoasStore.setAllControllers');
     try {
       return super.setAllControllers(pessoa);
     } finally {
@@ -185,7 +224,8 @@ mixin _$PessoasStore on _PessoasStore, Store {
 
   @override
   PessoaModel getTempPessoa() {
-    final _$actionInfo = _$_PessoasStoreActionController.startAction(name: '_PessoasStore.getTempPessoa');
+    final _$actionInfo = _$_PessoasStoreActionController.startAction(
+        name: '_PessoasStore.getTempPessoa');
     try {
       return super.getTempPessoa();
     } finally {
@@ -198,6 +238,7 @@ mixin _$PessoasStore on _PessoasStore, Store {
     return '''
 currentUser: ${currentUser},
 editedUser: ${editedUser},
+firstLowerUser: ${firstLowerUser},
 pessoas: ${pessoas},
 pessoaLoaded: ${pessoaLoaded},
 forms: ${forms}

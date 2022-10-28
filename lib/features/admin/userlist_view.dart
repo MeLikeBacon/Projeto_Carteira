@@ -19,8 +19,8 @@ class UserListView extends StatefulWidget {
 
 class _UserListViewState extends State<UserListView> {
   List<int> _selected = [];
-  EntradaController _entradaController = EntradaController();
-  SaidaController _saidaController = SaidaController();
+  final EntradaController _entradaController = EntradaController();
+  final SaidaController _saidaController = SaidaController();
 
   late PessoasStore _pessoasStore;
 
@@ -29,7 +29,6 @@ class _UserListViewState extends State<UserListView> {
     super.didChangeDependencies();
     _pessoasStore = Provider.of<PessoasStore>(context);
     _pessoasStore.loadPessoas();
-    //_pessoasStore.pessoas.isEmpty ? _pessoasStore.loadPessoas() : null;
   }
 
   @override
@@ -147,31 +146,37 @@ class _UserListViewState extends State<UserListView> {
             Row(
               children: [
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('ID:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
-                      Text('Nome:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
-                      Text('E-Mail:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
-                      Text('Senha:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
-                      Text('Mínimo:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
-                      Text('Saldo atual:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
-                      Text('Tipo:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
-                    ],
+                  child: DefaultTextStyle.merge(
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Text('ID:'),
+                        Text('Nome:'),
+                        Text('E-Mail:'),
+                        Text('Senha:'),
+                        Text('Mínimo:'),
+                        Text('Saldo atual:'),
+                        Text('Tipo:'),
+                      ],
+                    ),
                   ),
                 ),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('${pessoa.codigo}', style: TextStyle(fontSize: textSize)),
-                      Text('${pessoa.nome}', style: TextStyle(fontSize: textSize)),
-                      Text('${pessoa.email}', style: TextStyle(fontSize: textSize)),
-                      Text('${pessoa.senha}', style: TextStyle(fontSize: textSize)),
-                      Text(UtilBrasilFields.obterReal(pessoa.minimo!), style: TextStyle(fontSize: textSize)),
-                      Text(UtilBrasilFields.obterReal(pessoa.saldo!), style: TextStyle(fontSize: textSize)),
-                      Text('${pessoa.tipo}', style: TextStyle(fontSize: textSize)),
-                    ],
+                  child: DefaultTextStyle.merge(
+                    style: TextStyle(fontSize: textSize),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('${pessoa.codigo}'),
+                        Text('${pessoa.nome}'),
+                        Text('${pessoa.email}'),
+                        Text('${pessoa.senha}'),
+                        Text(UtilBrasilFields.obterReal(pessoa.minimo!)),
+                        Text(UtilBrasilFields.obterReal(pessoa.saldo!)),
+                        Text('${pessoa.tipo}'),
+                      ],
+                    ),
                   ),
                 ),
               ],

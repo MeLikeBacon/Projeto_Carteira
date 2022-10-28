@@ -16,7 +16,6 @@ class PessoasStore = _PessoasStore with _$PessoasStore;
 
 // The store-class
 abstract class _PessoasStore with Store {
-  final PessoaDao _pessoaDao = PessoaDao();
   final PessoaController _pessoaController = PessoaController();
 
   @observable
@@ -24,6 +23,9 @@ abstract class _PessoasStore with Store {
 
   @observable
   PessoaModel editedUser = PessoaModel();
+
+  @observable
+  PessoaModel firstLowerUser = PessoaModel();
 
   @observable
   List<PessoaModel> pessoas = [];
@@ -53,6 +55,11 @@ abstract class _PessoasStore with Store {
   }
 
   @action
+  Future setFirstUser() async {
+    firstLowerUser = await _pessoaController.findLowerPessoa(currentUser.tipo!) ?? PessoaModel();
+  }
+
+  @action
   void deleteUser(int id) {
     emptyPessoas();
     _pessoaController.deletePessoa(id);
@@ -68,7 +75,7 @@ abstract class _PessoasStore with Store {
   @action
   loadPessoas() async {
     pessoaLoaded = false;
-    pessoas = await _pessoaDao.getPessoas();
+    pessoas = await _pessoaController.getUsers();
     pessoaLoaded = true;
   }
 
@@ -79,7 +86,7 @@ abstract class _PessoasStore with Store {
 
   @observable
   FormFields forms = FormFields(TextEditingController(), TextEditingController(), TextEditingController(),
-      TextEditingController(), TextEditingController());
+      TextEditingController(), TextEditingController(), '');
 
   @action
   setUserType(value) {

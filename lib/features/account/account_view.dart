@@ -26,7 +26,7 @@ class _AccountViewState extends State<AccountView> {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     _pessoasStore = Provider.of<PessoasStore>(context);
-    _pessoasStore.forms.typeControl = _pessoasStore.currentUser.tipo;
+    _pessoasStore.forms.typeControl = _pessoasStore.currentUser.tipo!;
     controls = [
       _pessoasStore.forms.nomeControl,
       _pessoasStore.forms.emailControl,

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:pdf_viewer_plugin/pdf_viewer_plugin.dart';
 import 'package:projeto_carteira/features/components/myAppBar.dart';
@@ -38,9 +40,6 @@ class _PDFViewState extends State<PDFView> {
     _entradaStore = Provider.of<EntradaStore>(context);
     _saidaStore = Provider.of<SaidaStore>(context);
     _movsStore = Provider.of<MovsStore>(context);
-    // _entradaStore.entradas.isEmpty ? _entradaStore.loadEntradas() : null;
-    // _saidaStore.saidas.isEmpty ? _saidaStore.loadSaidas() : null;
-    // _movsStore.movs.isEmpty ? _movsStore.loadMovs() : null;
   }
 
   final PdfInvoiceService service = PdfInvoiceService();
@@ -125,39 +124,7 @@ class _PDFViewState extends State<PDFView> {
                     child: OutlinedButton(
                       style: OutlinedButton.styleFrom(side: const BorderSide(color: Colors.blue)),
                       onPressed: () async {
-                        final data;
-                        setState(() {
-                          filePath = null;
-                        });
-
-                        switch (consultaDrop!) {
-                          case 'Entradas e Saídas':
-                            await _movsStore.emptyMovs();
-                            await _movsStore.loadMovs(_pessoasStore.currentUser.codigo!);
-                            data = await service.createMovsInvoice(_movsStore.movs);
-                            filePath = await service.savePdfFile("relatorio_$number", data);
-                            setState(() {});
-                            break;
-                          case 'Entradas':
-                            await _entradaStore.emptyEntradas();
-                            await _entradaStore.loadEntradas(_pessoasStore.currentUser.codigo!);
-                            data = await service.createSpecificInvoice(_entradaStore.entradas);
-                            filePath = await service.savePdfFile("relatorio_$number", data);
-                            setState(() {});
-                            break;
-                          case 'Saídas':
-                            await _saidaStore.emptySaidas();
-                            await _saidaStore.loadSaidas(_pessoasStore.currentUser.codigo!);
-                            data = await service.createSpecificInvoice(_saidaStore.saidas);
-                            filePath = await service.savePdfFile("relatorio_$number", data);
-                            setState(() {});
-                            break;
-                        }
-                        final snackBar = SnackBar(
-                          content: Text("Relatório salvo em '$filePath'"),
-                        );
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        number++;
+                        await createPDF(clearList: true);
                       },
                       child: const Text('Todos'),
                     ),
@@ -169,35 +136,9 @@ class _PDFViewState extends State<PDFView> {
                     child: OutlinedButton(
                       style: OutlinedButton.styleFrom(side: const BorderSide(color: Colors.blue)),
                       onPressed: () async {
-                        final data;
-                        setState(() {
-                          filePath = null;
-                        });
-
-                        switch (consultaDrop!) {
-                          case 'Entradas e Saídas':
-                            data = await service.createMovsInvoice(_movsStore.movs);
-                            filePath = await service.savePdfFile("relatorio_$number", data);
-                            setState(() {});
-                            break;
-                          case 'Entradas':
-                            data = await service.createSpecificInvoice(_entradaStore.entradas);
-                            filePath = await service.savePdfFile("relatorio_$number", data);
-                            setState(() {});
-                            break;
-                          case 'Saídas':
-                            data = await service.createSpecificInvoice(_saidaStore.saidas);
-                            filePath = await service.savePdfFile("relatorio_$number", data);
-                            setState(() {});
-                            break;
-                        }
-                        final snackBar = SnackBar(
-                          content: Text("Relatório salvo em '$filePath'"),
-                        );
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        number++;
+                        await createPDF();
                       },
-                      child: const Text('Selecionados'),
+                      child: const Text('Filtrados'),
                     ),
                   ),
                 ],
@@ -206,15 +147,15 @@ class _PDFViewState extends State<PDFView> {
                 alignment: Alignment.centerLeft,
                 margin: const EdgeInsets.only(top: 30),
                 child: const Text(
-                  "Se você não filtrou itens na tela de consulta, a opção de 'Selecionados' retornará a tabela inteira.\n" +
-                      "Você pode clicar no ícone no canto direito da barra de navegação para acessar a tela de consulta.",
+                  "Se você não filtrou itens na tela de consulta, a opção de 'Selecionados' retornará a tabela inteira.\n"
+                  "Você pode clicar no ícone no canto direito da barra de navegação para acessar a tela de consulta.",
                   style: TextStyle(fontWeight: FontWeight.w300),
                 ),
               ),
               filePath != null
                   ? Column(
                       children: [
-                        Text('Preview:'),
+                        const Text('Preview:'),
                         SizedBox(
                             width: screenSize.width * 0.75,
                             height: screenSize.width * 0.75 * 1.414,
@@ -226,5 +167,36 @@ class _PDFViewState extends State<PDFView> {
           )),
         ),
         floatingActionButton: HomeFAB(iconSize: iconSize));
+  }
+
+  createPDF({bool clearList = false}) async {
+    final Uint8List data;
+
+    switch (consultaDrop!) {
+      case 'Entradas e Saídas':
+        clearList ? await _movsStore.loadMovs(_pessoasStore.currentUser.codigo!) : null;
+        data = await service.createMovsInvoice(_movsStore.movs);
+        filePath = await service.savePdfFile("relatorio_$number", data);
+        break;
+      case 'Entradas':
+        clearList ? await _entradaStore.loadEntradas(_pessoasStore.currentUser.codigo!) : null;
+        data = await service.createSpecificInvoice(_entradaStore.entradas);
+        filePath = await service.savePdfFile("relatorio_$number", data);
+        break;
+      case 'Saídas':
+        clearList ? await _saidaStore.loadSaidas(_pessoasStore.currentUser.codigo!) : null;
+        data = await service.createSpecificInvoice(_saidaStore.saidas);
+        filePath = await service.savePdfFile("relatorio_$number", data);
+        break;
+    }
+
+    setState(() {});
+
+    final snackBar = SnackBar(
+      content: Text("Relatório salvo em '$filePath'"),
+    );
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    number++;
   }
 }

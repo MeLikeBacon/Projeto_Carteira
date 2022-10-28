@@ -109,7 +109,7 @@ class _SignUpViewState extends State<SignUpView> {
                               senha: _pessoasStore.forms.senhaControl.text,
                               minimo: _minimumControl);
 
-                          loginFun(tempPessoa);
+                          signupFun(tempPessoa);
                         },
                         child: Text(
                           'Registrar',
@@ -149,7 +149,7 @@ class _SignUpViewState extends State<SignUpView> {
     return n > 0;
   }
 
-  void loginFun(PessoaModel tempPessoa) async {
+  void signupFun(PessoaModel tempPessoa) async {
     bool hasDuplicate = true;
     String title = '', body = '';
 

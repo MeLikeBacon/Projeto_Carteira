@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:intl/intl.dart';
+import 'package:projeto_carteira/features/account/controllers/pessoa_controller.dart';
 import 'package:projeto_carteira/features/movement/components/consultaTable.dart';
 import 'package:projeto_carteira/features/components/myAppBar.dart';
 import 'package:projeto_carteira/features/movement/stores/movs_store.dart';
@@ -27,28 +28,47 @@ class _SearchViewState extends State<SearchView> {
   late MovsStore _movsStore;
   late PessoasStore _pessoasStore;
 
+  final PessoaController _pessoaController = PessoaController();
+
   bool isAscending = true;
   int sortColumnIndex = 3;
 
-  List<String> consultaItems = ['Entradas e Saídas', 'Entradas', 'Saídas'];
-  String? dropUsers, consultaDrop = 'Entradas e Saídas';
-
   String dataRangeStart = '', dataRangeEnd = '';
-  int? selectedPersonId;
+
+  List<String> consultaItems = ['Entradas e Saídas', 'Entradas', 'Saídas'];
+  String? consultaDrop = 'Entradas e Saídas';
+  String dropUsers = '';
+  int selectedPersonId = 0;
+
+  int storeCanLoad = 0;
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     super.didChangeDependencies();
     _pessoasStore = Provider.of<PessoasStore>(context);
-    _pessoasStore.pessoas.isEmpty ? _pessoasStore.loadPessoas() : null;
+    _pessoasStore.loadPessoas();
     _entradaStore = Provider.of<EntradaStore>(context);
     _saidaStore = Provider.of<SaidaStore>(context);
     _movsStore = Provider.of<MovsStore>(context);
-    dropUsers = _pessoasStore.getLowerUsers().first.email;
-    selectedPersonId = _pessoasStore.getLowerUsers().first.codigo;
-    _entradaStore.entradas.isEmpty ? _entradaStore.loadEntradas(selectedPersonId!) : null;
-    _saidaStore.saidas.isEmpty ? _saidaStore.loadSaidas(selectedPersonId!) : null;
-    _movsStore.movs.isEmpty ? _movsStore.loadMovs(selectedPersonId!) : null;
+
+    await _pessoasStore.setFirstUser();
+
+    if (_pessoasStore.currentUser.tipo == 'adm') {
+      if (_pessoasStore.firstLowerUser.codigo != null) {
+        dropUsers = _pessoasStore.firstLowerUser.email!;
+        selectedPersonId = _pessoasStore.firstLowerUser.codigo!;
+      }
+    } else {
+      dropUsers = _pessoasStore.currentUser.email!;
+      selectedPersonId = _pessoasStore.currentUser.codigo!;
+    }
+
+    // print(_pessoasStore.firstLowerUser)
+
+    storeCanLoad == 0 ? _entradaStore.loadEntradas(selectedPersonId) : null;
+    storeCanLoad == 0 ? _saidaStore.loadSaidas(selectedPersonId) : null;
+    storeCanLoad == 0 ? _movsStore.loadMovs(selectedPersonId) : null;
+    storeCanLoad++;
   }
 
   final List<String> _range = ['', ''];
@@ -70,7 +90,7 @@ class _SearchViewState extends State<SearchView> {
     var textSize = 10 + MediaQuery.of(context).size.width * 0.0075;
     var iconSize = 25 + MediaQuery.of(context).size.width * 0.0075;
 
-    defineView() {
+    getMovTypeByLabel() {
       switch (consultaDrop!) {
         case 'Entradas e Saídas':
           return _movsStore.movs;
@@ -107,7 +127,10 @@ class _SearchViewState extends State<SearchView> {
           heightFactor: 1,
           child: Observer(
             builder: ((context) {
-              return _movsStore.movsLoaded && _saidaStore.saidaLoaded && _entradaStore.entradaLoaded
+              return _movsStore.movsLoaded &&
+                      _saidaStore.saidaLoaded &&
+                      _entradaStore.entradaLoaded &&
+                      selectedPersonId != 0
                   ? SingleChildScrollView(
                       child: Column(
                         children: [
@@ -131,21 +154,20 @@ class _SearchViewState extends State<SearchView> {
                                             style: TextStyle(fontSize: textSize),
                                           ));
                                     }).toList(),
-                                    onChanged: (String? value) {
+                                    onChanged: (String? value) async {
+                                      var resp = await _pessoaController.findLowerPessoaByEmail(value!, 'adm');
+                                      selectedPersonId = resp!.codigo!;
                                       setState(() {
-                                        dropUsers = value ?? '';
-                                        var resp =
-                                            _pessoasStore.getLowerUsers().firstWhere((pessoa) => pessoa.email == value);
-                                        selectedPersonId = resp.codigo;
+                                        dropUsers = value;
                                       });
-                                      setFilter(selectedPersonId!);
+                                      setFilter();
                                     },
                                   ),
                                 )
                               : const SizedBox(),
                           ConsultaTable(
                             view: consultaDrop!,
-                            tableItems: defineView(),
+                            tableItems: getMovTypeByLabel(),
                             sortColumnIndex: sortColumnIndex,
                             canEdit: _pessoasStore.currentUser.tipo == 'adm',
                           ),
@@ -155,7 +177,10 @@ class _SearchViewState extends State<SearchView> {
                         ],
                       ),
                     )
-                  : const Center(child: CircularProgressIndicator());
+                  : Center(
+                      child: selectedPersonId == 0
+                          ? const Text('Nenhum usuário encontrado')
+                          : const CircularProgressIndicator());
             }),
           )),
       floatingActionButton: Row(
@@ -183,22 +208,9 @@ class _SearchViewState extends State<SearchView> {
                     value: consultaDrop,
                     onChanged: ((String? value) {
                       setState(() {
-                        switch (value!) {
-                          case 'Entradas e Saídas':
-                            sortColumnIndex = 3;
-                            //filterMovs();
-                            break;
-                          case 'Entradas':
-                            sortColumnIndex = 0;
-                            //filterEntradas();
-                            break;
-                          case 'Saídas':
-                            sortColumnIndex = 0;
-                            //filterSaidas();
-                            break;
-                        }
+                        sortColumnIndex = value == 'Entradas e Saídas' ? 3 : 0;
                         consultaDrop = value;
-                        setFilter(selectedPersonId!);
+                        setFilter();
                       });
                     }),
                     items: consultaItems.map<DropdownMenuItem<String>>((String value) {
@@ -227,7 +239,7 @@ class _SearchViewState extends State<SearchView> {
                   SpeedDialChild(
                       child: const Icon(Icons.refresh),
                       onTap: () => setState(() {
-                            setFilter(selectedPersonId!);
+                            setFilter();
                           })),
                   SpeedDialChild(
                     child: const Icon(Icons.date_range),
@@ -249,12 +261,8 @@ class _SearchViewState extends State<SearchView> {
                                 actions: <Widget>[
                                   TextButton(
                                     onPressed: () {
-                                      setState(() {
-                                        dataRangeStart = _range[0];
-                                        dataRangeEnd = _range[1];
-                                        defineDataRange();
-                                        Navigator.pop(context, 'FILTRAR');
-                                      });
+                                      setFilter(initialDate: _range[0], finalDate: _range[1]);
+                                      Navigator.pop(context, 'FILTRAR');
                                     },
                                     child: const Text('FILTRAR'),
                                   ),
@@ -270,20 +278,14 @@ class _SearchViewState extends State<SearchView> {
                   ),
                   SpeedDialChild(
                       child: const Text('7 dias'),
-                      onTap: () => setState(() {
-                            dataRangeStart =
-                                DateFormat('yyyy-MM-dd').format(DateTime.now().add(const Duration(days: -7)));
-                            dataRangeEnd = DateFormat('yyyy-MM-dd').format(DateTime.now());
-                            defineDataRange();
-                          })),
+                      onTap: () => setFilter(
+                          initialDate: DateFormat('yyyy-MM-dd').format(DateTime.now().add(const Duration(days: -7))),
+                          finalDate: DateFormat('yyyy-MM-dd').format(DateTime.now()))),
                   SpeedDialChild(
                       child: const Text('15 dias'),
-                      onTap: () => setState(() {
-                            dataRangeStart =
-                                DateFormat('yyyy-MM-dd').format(DateTime.now().add(const Duration(days: -15)));
-                            dataRangeEnd = DateFormat('yyyy-MM-dd').format(DateTime.now());
-                            defineDataRange();
-                          })),
+                      onTap: () => setFilter(
+                          initialDate: DateFormat('yyyy-MM-dd').format(DateTime.now().add(const Duration(days: -15))),
+                          finalDate: DateFormat('yyyy-MM-dd').format(DateTime.now()))),
                 ],
               )
             ],
@@ -293,34 +295,17 @@ class _SearchViewState extends State<SearchView> {
     );
   }
 
-  setFilter(int personID, {String initialDate = '', String finalDate = '', bool clean = false}) async {
-    if (clean) {
-      _movsStore.emptyMovs();
-      await _movsStore.loadMovs(personID, initialDate: initialDate, finalDate: finalDate);
-      _entradaStore.emptyEntradas();
-      await _entradaStore.loadEntradas(personID, initialDate: initialDate, finalDate: finalDate);
-      _saidaStore.emptySaidas();
-      await _saidaStore.loadSaidas(personID, initialDate: initialDate, finalDate: finalDate);
-    } else {
-      switch (consultaDrop) {
-        case 'Entradas e Saídas':
-          _movsStore.emptyMovs();
-          await _movsStore.loadMovs(personID, initialDate: initialDate, finalDate: finalDate);
-          break;
-        case 'Entradas':
-          _entradaStore.emptyEntradas();
-          await _entradaStore.loadEntradas(personID, initialDate: initialDate, finalDate: finalDate);
-          break;
-        case 'Saídas':
-          _saidaStore.emptySaidas();
-          await _saidaStore.loadSaidas(personID, initialDate: initialDate, finalDate: finalDate);
-          break;
-      }
+  setFilter({String initialDate = '', String finalDate = ''}) async {
+    switch (consultaDrop) {
+      case 'Entradas e Saídas':
+        await _movsStore.loadMovs(selectedPersonId, initialDate: initialDate, finalDate: finalDate);
+        break;
+      case 'Entradas':
+        await _entradaStore.loadEntradas(selectedPersonId, initialDate: initialDate, finalDate: finalDate);
+        break;
+      case 'Saídas':
+        await _saidaStore.loadSaidas(selectedPersonId, initialDate: initialDate, finalDate: finalDate);
+        break;
     }
-    print('filtrado');
-  }
-
-  defineDataRange() {
-    setFilter(selectedPersonId!, initialDate: dataRangeStart, finalDate: dataRangeEnd);
   }
 }

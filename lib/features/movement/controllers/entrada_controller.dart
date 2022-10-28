@@ -8,9 +8,16 @@ import '../daos/entrada_dao.dart';
 import '../models/entrada_model.dart';
 
 class EntradaController {
-  Future<Database?> get db => DatabaseHelper.getInstance().db;
+  Future<Database?> get db =>
+      DatabaseHelper
+          .getInstance()
+          .db;
   final EntradaDao _entradaDao = EntradaDao();
   final PessoaController _pessoaController = PessoaController();
+
+  Future<List<EntradaModel>> getEntradas(int personId, {String initialDate = '', String finalDate = ''}) async {
+    return await _entradaDao.getEntradas(personId, initialDate: initialDate, finalDate: finalDate);
+  }
 
   insertEntrada(EntradaModel entrada, PessoaModel pessoa) async {
     pessoa.saldo = pessoa.saldo! + entrada.valor!;

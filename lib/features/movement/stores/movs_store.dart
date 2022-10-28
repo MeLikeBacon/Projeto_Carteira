@@ -1,9 +1,8 @@
 import 'package:mobx/mobx.dart';
-import 'package:projeto_carteira/features/movement/daos/entrada_dao.dart';
-import 'package:projeto_carteira/features/movement/daos/saida_dao.dart';
-import 'package:projeto_carteira/features/movement/models/movimento_abs.dart';
+import 'package:projeto_carteira/features/movement/controllers/entrada_controller.dart';
+import 'package:projeto_carteira/features/movement/controllers/saida_controller.dart';
 
-import 'dart:math';
+import 'package:projeto_carteira/features/movement/models/movimento_abs.dart';
 
 part 'movs_store.g.dart';
 
@@ -12,8 +11,8 @@ class MovsStore = _MovsStore with _$MovsStore;
 
 // The store-class
 abstract class _MovsStore with Store {
-  final EntradaDao _entradaDao = EntradaDao();
-  final SaidaDao _saidaDao = SaidaDao();
+  final EntradaController _entradaController = EntradaController();
+  final SaidaController _saidaController = SaidaController();
 
   @observable
   List<Movimento> movs = [];
@@ -25,8 +24,10 @@ abstract class _MovsStore with Store {
   loadMovs(int personId, {String initialDate = '', String finalDate = ''}) async {
     movsLoaded = false;
 
-    movs.addAll(await _entradaDao.getEntradas(personId, initialDate: initialDate, finalDate: finalDate));
-    movs.addAll(await _saidaDao.getSaidas(personId, initialDate: initialDate, finalDate: finalDate));
+    movs = [
+      ...await _entradaController.getEntradas(personId, initialDate: initialDate, finalDate: finalDate),
+      ...await _saidaController.getSaidas(personId, initialDate: initialDate, finalDate: finalDate)
+    ];
 
     movsLoaded = true;
   }

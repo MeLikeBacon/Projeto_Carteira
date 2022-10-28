@@ -28,7 +28,7 @@ class _ConsultaTableState extends State<ConsultaTable> {
   final EntradaController _entradaController = EntradaController();
   final SaidaController _saidaController = SaidaController();
 
-  TextEditingController _descControl = TextEditingController();
+  final TextEditingController _descControl = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -175,34 +175,39 @@ class _ConsultaTableState extends State<ConsultaTable> {
             Row(
               children: [
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text('ID:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
-                      Text('Usuário:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
-                      Text('Responsável:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
-                      Text('Data:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
-                      Text('Valor:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
-                      Text('Tipo:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
-                      Text('Descrição:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize)),
-                    ],
+                  child: DefaultTextStyle.merge(
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: textSize),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: const [
+                        Text('ID:'),
+                        Text('Usuário:'),
+                        Text('Responsável:'),
+                        Text('Data:'),
+                        Text('Valor:'),
+                        Text('Tipo:'),
+                        Text('Descrição:'),
+                      ],
+                    ),
                   ),
                 ),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text('${mov.codigo}', style: TextStyle(fontSize: textSize)),
-                      Text(user.email!, style: TextStyle(fontSize: textSize)),
-                      Text(resp.email!, style: TextStyle(fontSize: textSize)),
-                      Text(UtilData.obterDataDDMMAAAA(mov.data!), style: TextStyle(fontSize: textSize)),
-                      Text(UtilBrasilFields.obterReal(mov.valor!), style: TextStyle(fontSize: textSize)),
-                      Text(mov.mov_type! ? 'Entrada' : 'Saída', style: TextStyle(fontSize: textSize)),
-                      Text(mov.descricao!,
-                          maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: textSize)),
-                    ],
+                  child: DefaultTextStyle.merge(
+                    style: TextStyle(fontSize: textSize),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text('${mov.codigo}'),
+                        Text(user.email!),
+                        Text(resp.email!),
+                        Text(UtilData.obterDataDDMMAAAA(mov.data!)),
+                        Text(UtilBrasilFields.obterReal(mov.valor!)),
+                        Text(mov.mov_type! ? 'Entrada' : 'Saída'),
+                        Text(mov.descricao!, maxLines: 1, overflow: TextOverflow.ellipsis),
+                      ],
+                    ),
                   ),
                 ),
               ],
